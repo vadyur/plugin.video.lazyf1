@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2150de14-26a3-4350-adba-927e6720c6fc}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>lib\rutracker.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="addon.xml" />
+    <Content Include="resources\seasons\1999\bg.jpg" />
+    <Content Include="resources\seasons\2000\bg.jpg" />
+    <Content Include="resources\seasons\2001\bg.jpg" />
+    <Content Include="resources\seasons\2002\bg.jpg" />
+    <Content Include="resources\seasons\2003\bg.jpg" />
+    <Content Include="resources\seasons\2004\bg.jpg" />
+    <Content Include="resources\seasons\2005\bg.jpg" />
+    <Content Include="resources\seasons\2006\bg.jpg" />
+    <Content Include="resources\seasons\2007\bg.jpg" />
+    <Content Include="resources\seasons\2008\bg.jpg" />
+    <Content Include="resources\seasons\2009\bg.jpg" />
+    <Content Include="resources\seasons\2010\bg.jpg" />
+    <Content Include="resources\seasons\2011\bg.jpg" />
+    <Content Include="resources\seasons\2012\bg.jpg" />
+    <Content Include="resources\seasons\2013\bg.jpg" />
+    <Content Include="resources\seasons\2014\bg.jpg" />
+    <Content Include="resources\seasons\2015\bg.jpg" />
+    <Content Include="resources\seasons\2016\bg.jpg" />
+    <Content Include="resources\seasons\2017\bg.jpg" />
+    <Content Include="resources\seasons\current\bg.jpg" />
+    <Content Include="resources\settings.xml" />
+    <Content Include="resources\tracks\austin\bg.jpg" />
+    <Content Include="resources\tracks\austin\map.png" />
+    <Content Include="resources\tracks\baku\bg.jpg" />
+    <Content Include="resources\tracks\baku\map.png" />
+    <Content Include="resources\tracks\barcelona\bg.jpg" />
+    <Content Include="resources\tracks\barcelona\map.png" />
+    <Content Include="resources\tracks\hockenheim\map.png" />
+    <Content Include="resources\tracks\hungaroring\bg.jpg" />
+    <Content Include="resources\tracks\hungaroring\map.png" />
+    <Content Include="resources\tracks\interlagos\bg.jpg" />
+    <Content Include="resources\tracks\interlagos\map.png" />
+    <Content Include="resources\tracks\melbourne\bg.jpg" />
+    <Content Include="resources\tracks\melbourne\map.png" />
+    <Content Include="resources\tracks\mexico\bg.jpg" />
+    <Content Include="resources\tracks\mexico\map.png" />
+    <Content Include="resources\tracks\monaco\bg.jpg" />
+    <Content Include="resources\tracks\monaco\map.png" />
+    <Content Include="resources\tracks\montreal\bg.jpg" />
+    <Content Include="resources\tracks\montreal\map.png" />
+    <Content Include="resources\tracks\monza\bg.jpg" />
+    <Content Include="resources\tracks\monza\map.png" />
+    <Content Include="resources\tracks\nuerburgring\bg.jpg" />
+    <Content Include="resources\tracks\nuerburgring\map.png" />
+    <Content Include="resources\tracks\redbullring\bg.jpg" />
+    <Content Include="resources\tracks\redbullring\map.png" />
+    <Content Include="resources\tracks\sakhir\bg.jpg" />
+    <Content Include="resources\tracks\sakhir\map.png" />
+    <Content Include="resources\tracks\sepang\bg.jpg" />
+    <Content Include="resources\tracks\sepang\map.png" />
+    <Content Include="resources\tracks\shanghai\bg.jpg" />
+    <Content Include="resources\tracks\shanghai\map.png" />
+    <Content Include="resources\tracks\silverstone\bg.jpg" />
+    <Content Include="resources\tracks\silverstone\map.png" />
+    <Content Include="resources\tracks\singapore\bg.jpg" />
+    <Content Include="resources\tracks\singapore\map.png" />
+    <Content Include="resources\tracks\sochi\bg.jpg" />
+    <Content Include="resources\tracks\sochi\map.png" />
+    <Content Include="resources\tracks\spa\bg.jpg" />
+    <Content Include="resources\tracks\spa\map.png" />
+    <Content Include="resources\tracks\suzuka\bg.jpg" />
+    <Content Include="resources\tracks\suzuka\map.png" />
+    <Content Include="resources\tracks\track-map.json" />
+    <Content Include="resources\tracks\yasmarina\bg.jpg" />
+    <Content Include="resources\tracks\yasmarina\map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="lib\f1news.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\interface.py" />
+    <Compile Include="lib\rutracker.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\__init__.py" />
+    <Compile Include="main.py" />
+    <Compile Include="resources\seasons\make_bg.py" />
+    <Compile Include="resources\tracks\track-map.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib" />
+    <Folder Include="resources\" />
+    <Folder Include="resources\seasons\" />
+    <Folder Include="resources\seasons\1999\" />
+    <Folder Include="resources\seasons\2000\" />
+    <Folder Include="resources\seasons\2001\" />
+    <Folder Include="resources\seasons\2002\" />
+    <Folder Include="resources\seasons\2003\" />
+    <Folder Include="resources\seasons\2004\" />
+    <Folder Include="resources\seasons\2005\" />
+    <Folder Include="resources\seasons\2006\" />
+    <Folder Include="resources\seasons\2007\" />
+    <Folder Include="resources\seasons\2008\" />
+    <Folder Include="resources\seasons\2009\" />
+    <Folder Include="resources\seasons\2010\" />
+    <Folder Include="resources\seasons\2011\" />
+    <Folder Include="resources\seasons\2012\" />
+    <Folder Include="resources\seasons\2013\" />
+    <Folder Include="resources\seasons\2014\" />
+    <Folder Include="resources\seasons\2015\" />
+    <Folder Include="resources\seasons\2016\" />
+    <Folder Include="resources\seasons\2017\" />
+    <Folder Include="resources\seasons\current\" />
+    <Folder Include="resources\tracks\" />
+    <Folder Include="resources\tracks\austin\" />
+    <Folder Include="resources\tracks\baku\" />
+    <Folder Include="resources\tracks\barcelona\" />
+    <Folder Include="resources\tracks\hockenheim\" />
+    <Folder Include="resources\tracks\hungaroring\" />
+    <Folder Include="resources\tracks\interlagos\" />
+    <Folder Include="resources\tracks\melbourne\" />
+    <Folder Include="resources\tracks\mexico\" />
+    <Folder Include="resources\tracks\monaco\" />
+    <Folder Include="resources\tracks\montreal\" />
+    <Folder Include="resources\tracks\monza\" />
+    <Folder Include="resources\tracks\nuerburgring\" />
+    <Folder Include="resources\tracks\redbullring\" />
+    <Folder Include="resources\tracks\sakhir\" />
+    <Folder Include="resources\tracks\sepang\" />
+    <Folder Include="resources\tracks\shanghai\" />
+    <Folder Include="resources\tracks\silverstone\" />
+    <Folder Include="resources\tracks\singapore\" />
+    <Folder Include="resources\tracks\sochi\" />
+    <Folder Include="resources\tracks\spa\" />
+    <Folder Include="resources\tracks\suzuka\" />
+    <Folder Include="resources\tracks\yasmarina\" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>

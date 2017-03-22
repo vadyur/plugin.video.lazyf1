@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.lazyf1" version="0.0.1" name="[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]" provider-name="-=Vd=-">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.lazyf1.images" optional="false"/>
+    <import addon="plugin.video.yatp" optional="true"/>
+    <import addon="script.module.torrent2http" optional="false"/>
+    <import addon="script.module.torrent.ts" optional="true"/>
+    <import addon="script.module.beautifulsoup4" version="4.3.0"/>
+    <import addon="script.module.requests" optional="false"/>
+    <import addon="script.module.simpleplugin"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="ru">Formula 1 для удобного просмотра</summary>
+    <description lang="ru">Formula 1 для удобного просмотра</description>
+  </extension>
+</addon>

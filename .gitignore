@@ -1,0 +1,5 @@
+*.pyo
+*.pyc
+*test.py
+.idea/
+ptvsd/
