@@ -6,10 +6,12 @@ from lib.rutracker import RuTracker
 from lib.log import debug
 
 import lazyf1images
-import xbmc, json, xbmcaddon, xbmcgui
+import xbmc, xbmcaddon, xbmcgui, xbmcplugin
+import sys, json, os
+
 
 plugin = Plugin()
-f1news = F1News()
+f1news = F1News(res_path=os.path.join(plugin.path, 'resources'))
 rutracker = RuTracker(plugin)
 
 _addon_title_ = '[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]'
@@ -17,6 +19,8 @@ _addon = xbmcaddon.Addon()
 
 @plugin.action()
 def root(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+
 	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend')},
 			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season')},
 			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons')},
@@ -26,11 +30,15 @@ def root(params):
 
 @plugin.action()
 def weekend(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+
 	return [ item for item in f1news.weekend_schedule(plugin.get_url) ]
 
 
 @plugin.action()
 def curr_season(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+
 	return [ item for item in f1news.calendar(2017, plugin.get_url) ]
 
 def item_by_year(year):
@@ -41,10 +49,14 @@ def item_by_year(year):
 
 @plugin.action()
 def prev_seasons(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
+
 	return [item_by_year(item) for item in range(2016, 1999-1, -1)]
 
 @plugin.action()
 def show_season(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+
 	return [ item for item in f1news.calendar(params['year'], plugin.get_url) ]
 
 def gp_event(event, params):
@@ -53,6 +65,7 @@ def gp_event(event, params):
 
 @plugin.action()
 def show_gp(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 	return [ 
 			gp_event(u'Квалификация', params),
 			gp_event(u'Гонка', params)
@@ -138,7 +151,6 @@ def list_torrent(params):
 		playable_url = player.GetStreamURL(playable_item)
 		debug(playable_url)
 
-		import sys, xbmcplugin
 		handle = int(sys.argv[1])
 		list_item = xbmcgui.ListItem(path=playable_url)
 
@@ -224,6 +236,8 @@ def get_channels():
 
 @plugin.action()
 def live(params):
+	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+
 	return [ item for item in get_channels() ]
 
 def jsonrpc(query):

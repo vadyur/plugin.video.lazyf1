@@ -6,7 +6,7 @@ except:
 
 import inspect
 
-prefix = 'script.media.aggregator'
+prefix = 'Lazy F1'
 
 def debug(s, line = None):
 

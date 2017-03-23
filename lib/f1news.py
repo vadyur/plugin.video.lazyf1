@@ -3,6 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from base import clean_html
+from log import debug
 import lazyf1images
 
 class F1News(object):
@@ -45,8 +46,9 @@ class F1News(object):
 	}
 
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, res_path, *args, **kwargs):
 		self.root_soap = self._get_root_soap()
+		self.res_path = res_path
 		return super(F1News, self).__init__(*args, **kwargs)
 
 	def _get_root_soap(self):
@@ -91,24 +93,42 @@ class F1News(object):
 		soap = self.champ_soap(year)
 		if soap:
 
+			ep_number = 0
 			for tr in soap.find('table', class_='f1Table').find_all('tr'):
 				if 'firstLine' in tr['class']:
 					continue
 
+				ep_number += 1
 				TDs = tr.find_all('td')				
 
 				item = {'is_playable': False}
 				item['label'] = u'%s %s (%s)' % (TDs[0].get_text(), TDs[2].get_text(), TDs[3].get_text())
 				try:
+					infovideo = {'year': int(year), 'genre': 'sport', 'season': int(year), 
+								'episode': ep_number, 'tracknumber': ep_number, 'title': item['label'],
+								'studio': 'Formula One Management', 'tvshowtitle': 'Formula One Championship',
+								'premiered': '1950-05-13' }
 					ru = TDs[3].get_text()
-					if ru in self.track_map['ru-f1news']:
-						item['thumb'] = self.tracks_path + self.track_map['ru-f1news'][ru] + '/map.png'
-						item['fanart'] = self.tracks_path + self.track_map['ru-f1news'][ru] + '/bg.jpg'
+					tm = self.track_map['ru-f1news']
+					if ru in tm:
+						item['thumb'] = self.tracks_path + tm[ru] + '/map.png'
+						item['fanart'] = self.tracks_path + tm[ru] + '/bg.jpg'
+						item['art'] = {'thumb': item['thumb'], 'fanart': item['fanart'], 'poster': item['thumb']}
+						import filesystem
+						path = filesystem.join(self.res_path, 'tracks', tm[ru], 'info.txt')
+						debug(path)
+						if filesystem.exists(path):
+							debug('exists')
+							with filesystem.fopen(path, 'r') as info:
+								infovideo['plot'] = info.read()
 					else:
 						import urlparse
 						res = urlparse.urlparse(TDs[1].img['src'])
 						res = urlparse.ParseResult(res.scheme if res.scheme else 'https', res.netloc, res.path, res.params, res.query, res.fragment)
 						item['thumb'] = urlparse.urlunparse(res)  
+
+					item['info'] = {'video': infovideo }
+					debug(item)
 				except:
 					pass
 				item['url'] = get_url(action='show_gp', season=str(year), GP=TDs[2].get_text().encode('utf-8'))
