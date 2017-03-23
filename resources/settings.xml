@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
+    <!--
     <category label="Основные">
     </category>
-
+  
     <category label="Предпочтения">
 		<setting label="Битрейт (кбит/сек)" type="number" id="preffered_bitrate" default="10000"/>
 		<setting label="Качество" id="preffered_type" type="select" values="720p|1080" default="1080" />
         <setting label="Кодек" id="preffered_codec" type="select" values="MPEG2/MPEG4 ASP|H264/AVC|H265/HEVC" default="H264/AVC"/>
     </category>
+    -->
 
-    <category label="P2P Сеть">
-		<setting label="Торрент проигрыватель" id="torrent_player" type="select" values="YATP|torrent2http|Ace Stream" default="torrent2http" />
+  <category label="RuTracker">
+    <setting label="Домен" type="text"   id="rt_baseurl" default="rutracker.net"/>
+    <setting label="Учётные данные сайта rutracker.org (необходима регистрация на сайте)" type="lsep"/>
+    <setting label="Login" type="text"   id="rt_username" default=""/>
+    <setting label="Password" type="text"   id="rt_password" option="hidden"  default=""/>
+  </category>
+
+  <category label="P2P Сеть">
+		<setting label="Торрент проигрыватель" id="torrent_player" type="select" values="torrent2http" default="torrent2http" /> <!--|YATP|Ace Stream-->
 		<setting label="Путь для сохранения видео файлов"	type="folder" id="storage_path"	default="" visible="eq(-1,torrent2http)" />
-        <setting id="upload_limit"      type="number"   label="Ограничить скорость раздачи МБит/сек (0 - неограничено)" default="0"       visible="eq(-2,torrent2http)"/>
-        <setting id="download_limit"    type="number"   label="Ограничить скорость закачки МБит/сек (0 - неограничено)" default="0"       visible="eq(-3,torrent2http)"/>
-        <setting id="encryption"        type="bool"     label="Шифрование" default="true"    visible="eq(-4,torrent2http)"/>
-        <setting id="connections_limit" type="number"   label="Макс. соединений (0 - безлимит)" default="200"     visible="eq(-5,torrent2http)"/>
-        <setting id="listen_port"       type="number"   label="Порт для входящих соединений" default="6881"    visible="eq(-6,torrent2http)"/>
-        <setting id="use_random_port"   type="bool"     label="Использовать случайные порты" default="false"   visible="eq(-7,torrent2http)"/>
-        <setting id="pre_buffer_bytes"  type="slider"   label="Загружаемый объем файла до начала просмотра, Мб" default="25"      visible="eq(-8,torrent2http)"  range="5,5,50" option="int"/>
-        <setting id="add_tracker"       type="text"     label="Дополнительный трекер" default="" visible="eq(-9,torrent2http)"/>
-		<setting id="start_play_max_time" type="number"   label="Таймаут начала воспроизведения (секунды)" default="60"/>
-		<setting id="search_seed_max_time" type="number"  label="Таймаут поиска сидов (секунды)" default="15"/>
+    <setting id="upload_limit"      type="number"   label="Ограничить скорость раздачи МБит/сек (0 - неограничено)" default="0"       visible="eq(-2,torrent2http)"/>
+    <setting id="download_limit"    type="number"   label="Ограничить скорость закачки МБит/сек (0 - неограничено)" default="0"       visible="eq(-3,torrent2http)"/>
+    <setting id="encryption"        type="bool"     label="Шифрование" default="true"    visible="eq(-4,torrent2http)"/>
+    <setting id="connections_limit" type="number"   label="Макс. соединений (0 - безлимит)" default="200"     visible="eq(-5,torrent2http)"/>
+    <setting id="listen_port"       type="number"   label="Порт для входящих соединений" default="6881"    visible="eq(-6,torrent2http)"/>
+    <setting id="use_random_port"   type="bool"     label="Использовать случайные порты" default="false"   visible="eq(-7,torrent2http)"/>
+    <setting id="pre_buffer_bytes"  type="slider"   label="Загружаемый объем файла до начала просмотра, Мб" default="25"      visible="eq(-8,torrent2http)"  range="5,5,50" option="int"/>
 	</category>
-	
-    <category label="RuTracker">
-      <setting label="Домен" type="text"   id="rt_baseurl" default="rutracker.net"/>
-      <setting label="Учётные данные сайта rutracker.org (необходима регистрация на сайте)" type="lsep"/>
-        <setting label="Login" type="text"   id="rt_username" default=""/>
-        <setting label="Password" type="text"   id="rt_password" option="hidden"  default=""/>
-    </category>
+  
+  <category label="ТВ">
+    <setting label="Источник" id="tv_source" type="select" values="PVR" default="PVR" />
+  </category>
 
 </settings>

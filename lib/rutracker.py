@@ -2,6 +2,7 @@
 
 import requests, urlparse, re, json
 from bs4 import BeautifulSoup
+from base import clean_html
 
 class RuTracker(object):
 
@@ -130,7 +131,7 @@ class RuTracker(object):
 	
 		r = self.post_request(url, headers=headers, data=data)
 		if r.ok:
-			bs = BeautifulSoup(r.text, 'html.parser')
+			bs = BeautifulSoup(clean_html(r.text), 'html.parser')
 			for tr in bs.find_all('tr', class_='hl-tr'):
 				title = tr.find('a', class_='torTopic').get_text()
 				if str(year) not in title:

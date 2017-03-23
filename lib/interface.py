@@ -6,11 +6,14 @@ from lib.rutracker import RuTracker
 from lib.log import debug
 
 import lazyf1images
-import xbmc, json
+import xbmc, json, xbmcaddon, xbmcgui
 
 plugin = Plugin()
 f1news = F1News()
 rutracker = RuTracker(plugin)
+
+_addon_title_ = '[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]'
+_addon = xbmcaddon.Addon()
 
 @plugin.action()
 def root(params):
@@ -87,13 +90,16 @@ def search_item(item):
 
 @plugin.action()
 def search(params):
+	if not rutracker.check_params():
+		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
+		_addon.openSettings()
+
 	search_str = params['event'] + ' ' + params['GP']
 	items = [search_item(item) for item in rutracker.search(search_str.decode('utf-8'), params['season'])] 
 	if len(items) > 0: 
 		return items
 	else:
-		import xbmcgui
-		xbmcgui.Dialog().notification('[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]', u'Пока ничего нет')
+		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
 
 def path2url(path):
 	import urllib, urlparse
@@ -132,7 +138,7 @@ def list_torrent(params):
 		playable_url = player.GetStreamURL(playable_item)
 		debug(playable_url)
 
-		import xbmcgui, sys, xbmcplugin
+		import sys, xbmcplugin
 		handle = int(sys.argv[1])
 		list_item = xbmcgui.ListItem(path=playable_url)
 
@@ -198,11 +204,18 @@ def get_channels():
 
 	ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups", "params":{"channeltype":"tv"} }'))
 	debug(ret)
-	channelgroups = ret['result']['channelgroups']
+	try:
+		channelgroups = ret['result']['channelgroups']
+	except KeyError:
+		return
+
 	for channelgroup in channelgroups:
 		#Get Channels
 		ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannels", "params":{"channelgroupid" : ' + str(channelgroup['channelgroupid']) + '} }'))
-		channels = ret['result']['channels']
+		try:
+			channels = ret['result']['channels']
+		except KeyError:
+			return
 		for channel in channels:
 			if u'Матч! Арена' in channel['label'] or u'Setanta Sports HD' in channel['label']:
 				channel['url'] = plugin.get_url(action='tvchannel', **channel)
@@ -212,9 +225,6 @@ def get_channels():
 @plugin.action()
 def live(params):
 	return [ item for item in get_channels() ]
-	#t = channelName2uniqueId('ICTV')
-	#debug(t)
-	#return params.url
 
 def jsonrpc(query):
 	ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))	

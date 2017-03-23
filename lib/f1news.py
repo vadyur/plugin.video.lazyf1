@@ -2,6 +2,7 @@
 
 import requests
 from bs4 import BeautifulSoup
+from base import clean_html
 import lazyf1images
 
 class F1News(object):
@@ -51,14 +52,14 @@ class F1News(object):
 	def _get_root_soap(self):
 		resp = requests.get('https://www.f1news.ru', headers=self.headers, verify=False)
 		if resp.status_code == requests.codes.ok:
-			html = resp.text
+			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
 			return soup
 
 	def _get_champ_soap(self, year):
 		resp = requests.get('https://www.f1news.ru/Championship/%s/' % str(year), headers=self.headers, verify=False)
 		if resp.status_code == requests.codes.ok:
-			html = resp.text
+			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
 			return soup
 
