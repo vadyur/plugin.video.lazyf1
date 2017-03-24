@@ -108,14 +108,16 @@ class RuTracker(object):
 	def post_request(self, url, data=None, headers=None, cookies=None):
 		return self.session.post(url, data=data, headers=headers, cookies=cookies)
 
-	def search(self, text, year):
+	def search(self, event, GP, year):
 		if not self.check_params():
 			return
 
 		url = 'http://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
 		headers = {'Referer': url}
 
-		s = unicode(year) + ' ' + text
+		event = event.lower().replace(u'тренировка', u'практика')
+
+		s = unicode(year) + ' ' + event + ' ' + GP
 		s = s.encode('cp1251')
 
 		#import urllib
@@ -143,20 +145,34 @@ class RuTracker(object):
 				if seeds == '0':
 					continue
 
+				for p in RuTracker.parts(title):
+					if u'практика' in p:
+						m = re.search('(\d)', p)
+						if m:
+							n = m.group(1)
+							if n not in event:
+								return
+
 				yield {
 					'title': title,	'info': info,
 					'seeds': seeds,
 					'leechers': tr.find('span', class_='leechmed').get_text(),
 					'dl_link': 'http://%s/forum/' % self.baseurl + tr.find('a', class_='f-dl')['href']
 				}
+
+	@staticmethod
+	def parts(title):
+		pts = title.split(' / ')
+		if len(pts) < 2:
+			pts = title.split('. ')
+			if len(pts) < 2:
+				pts = title.split(u' – ')
+
+		return pts
 	
 	@staticmethod
 	def clean_title(title, year=None):
-		parts = title.split(' / ')
-		if len(parts) < 2:
-			parts = title.split('. ')
-			if len(parts) < 2:
-				parts = title.split(u' – ')
+		parts = RuTracker.parts(title)
 
 		if len(parts) > 1:
 			new = []

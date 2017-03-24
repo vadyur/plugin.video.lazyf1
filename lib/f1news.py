@@ -84,8 +84,12 @@ class F1News(object):
 		if self.root_soap:
 			for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
 				tr = a.parent.parent
-				title = tr.find('span').get_text()
-				yield {'label': title, 'thumb': '', 'is_playable': True, 
+				try:
+					title = tr.find('td').get_text()
+				except AttributeError:
+					continue
+					
+				yield {'label': title, 'thumb': '', 'is_playable': False, 
 						'url': get_url(action='search', event=title.encode('utf-8'), season='2017', GP=self.weekend_title().encode('utf-8'))}
 
 	def calendar(self, year, get_url):

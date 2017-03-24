@@ -107,8 +107,7 @@ def search(params):
 		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
 		_addon.openSettings()
 
-	search_str = params['event'] + ' ' + params['GP']
-	items = [search_item(item) for item in rutracker.search(search_str.decode('utf-8'), params['season'])] 
+	items = [search_item(item) for item in rutracker.search(params['event'].decode('utf-8'), params['GP'].decode('utf-8'), params['season'])] 
 	if len(items) > 0: 
 		return items
 	else:

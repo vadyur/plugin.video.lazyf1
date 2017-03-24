@@ -43,63 +43,26 @@
     <Content Include="resources\seasons\2017\bg.jpg" />
     <Content Include="resources\seasons\current\bg.jpg" />
     <Content Include="resources\settings.xml" />
-    <Content Include="resources\tracks\austin\bg.jpg" />
-    <Content Include="resources\tracks\austin\map.png" />
-    <Content Include="resources\tracks\baku\bg.jpg" />
-    <Content Include="resources\tracks\baku\map.png" />
-    <Content Include="resources\tracks\barcelona\bg.jpg" />
-    <Content Include="resources\tracks\barcelona\map.png" />
-    <Content Include="resources\tracks\hockenheim\map.png" />
-    <Content Include="resources\tracks\hungaroring\bg.jpg" />
-    <Content Include="resources\tracks\hungaroring\map.png" />
-    <Content Include="resources\tracks\interlagos\bg.jpg" />
-    <Content Include="resources\tracks\interlagos\map.png" />
-    <Content Include="resources\tracks\melbourne\bg.jpg" />
-    <Content Include="resources\tracks\melbourne\map.png" />
-    <Content Include="resources\tracks\mexico\bg.jpg" />
-    <Content Include="resources\tracks\mexico\map.png" />
-    <Content Include="resources\tracks\monaco\bg.jpg" />
-    <Content Include="resources\tracks\monaco\map.png" />
-    <Content Include="resources\tracks\montreal\bg.jpg" />
-    <Content Include="resources\tracks\montreal\map.png" />
-    <Content Include="resources\tracks\monza\bg.jpg" />
-    <Content Include="resources\tracks\monza\map.png" />
-    <Content Include="resources\tracks\nuerburgring\bg.jpg" />
-    <Content Include="resources\tracks\nuerburgring\map.png" />
-    <Content Include="resources\tracks\redbullring\bg.jpg" />
-    <Content Include="resources\tracks\redbullring\map.png" />
-    <Content Include="resources\tracks\sakhir\bg.jpg" />
-    <Content Include="resources\tracks\sakhir\map.png" />
-    <Content Include="resources\tracks\sepang\bg.jpg" />
-    <Content Include="resources\tracks\sepang\map.png" />
-    <Content Include="resources\tracks\shanghai\bg.jpg" />
-    <Content Include="resources\tracks\shanghai\map.png" />
-    <Content Include="resources\tracks\silverstone\bg.jpg" />
-    <Content Include="resources\tracks\silverstone\map.png" />
-    <Content Include="resources\tracks\singapore\bg.jpg" />
-    <Content Include="resources\tracks\singapore\map.png" />
-    <Content Include="resources\tracks\sochi\bg.jpg" />
-    <Content Include="resources\tracks\sochi\map.png" />
-    <Content Include="resources\tracks\spa\bg.jpg" />
-    <Content Include="resources\tracks\spa\map.png" />
-    <Content Include="resources\tracks\suzuka\bg.jpg" />
-    <Content Include="resources\tracks\suzuka\map.png" />
-    <Content Include="resources\tracks\track-map.json" />
-    <Content Include="resources\tracks\yasmarina\bg.jpg" />
-    <Content Include="resources\tracks\yasmarina\map.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="lib\base.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\bencode.py" />
     <Compile Include="lib\f1news.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="lib\filesystem.py" />
     <Compile Include="lib\interface.py" />
+    <Compile Include="lib\log.py" />
     <Compile Include="lib\rutracker.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="lib\torrent2httpplayer.py" />
+    <Compile Include="lib\torrentplayer.py" />
     <Compile Include="lib\__init__.py" />
     <Compile Include="main.py" />
     <Compile Include="resources\seasons\make_bg.py" />
-    <Compile Include="resources\tracks\track-map.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib" />
@@ -125,29 +88,6 @@
     <Folder Include="resources\seasons\2016\" />
     <Folder Include="resources\seasons\2017\" />
     <Folder Include="resources\seasons\current\" />
-    <Folder Include="resources\tracks\" />
-    <Folder Include="resources\tracks\austin\" />
-    <Folder Include="resources\tracks\baku\" />
-    <Folder Include="resources\tracks\barcelona\" />
-    <Folder Include="resources\tracks\hockenheim\" />
-    <Folder Include="resources\tracks\hungaroring\" />
-    <Folder Include="resources\tracks\interlagos\" />
-    <Folder Include="resources\tracks\melbourne\" />
-    <Folder Include="resources\tracks\mexico\" />
-    <Folder Include="resources\tracks\monaco\" />
-    <Folder Include="resources\tracks\montreal\" />
-    <Folder Include="resources\tracks\monza\" />
-    <Folder Include="resources\tracks\nuerburgring\" />
-    <Folder Include="resources\tracks\redbullring\" />
-    <Folder Include="resources\tracks\sakhir\" />
-    <Folder Include="resources\tracks\sepang\" />
-    <Folder Include="resources\tracks\shanghai\" />
-    <Folder Include="resources\tracks\silverstone\" />
-    <Folder Include="resources\tracks\singapore\" />
-    <Folder Include="resources\tracks\sochi\" />
-    <Folder Include="resources\tracks\spa\" />
-    <Folder Include="resources\tracks\suzuka\" />
-    <Folder Include="resources\tracks\yasmarina\" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
