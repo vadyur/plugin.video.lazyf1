@@ -1,6 +1,10 @@
 # coding: utf-8
 
-import requests, urlparse, re, json
+import requests, re, json
+
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 from bs4 import BeautifulSoup
 from base import clean_html
 
@@ -128,12 +132,8 @@ class RuTracker(object):
 		s = unicode(year) + ' ' + event + ' ' + GP
 		s = s.encode('cp1251')
 
-		#import urllib
-		#s = urllib.quote_plus(s)
-
 		data = { 'fsf': '255', 'nm': s }
 
-	
 		r = self.post_request(url, headers=headers, data=data)
 		if r.ok:
 			bs = BeautifulSoup(clean_html(r.text), 'html.parser')
@@ -148,17 +148,17 @@ class RuTracker(object):
 				if seeds == '0':
 					continue
 
-				go_next = False
+				skip_wrong = False
 				for p in RuTracker.parts(title):
 					if u'практика' in p:
 						m = re.search('(\d)', p)
 						if m:
 							n = m.group(1)
 							if n not in event:
-								go_next = True
+								skip_wrong = True
 								break
 
-				if go_next:
+				if skip_wrong:
 					continue
 
 				yield {
