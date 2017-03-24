@@ -103,7 +103,7 @@ def search_item(item):
 
 @plugin.action()
 def search(params):
-	if not rutracker.check_params():
+	if not rutracker.check_settings():
 		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
 		_addon.openSettings()
 

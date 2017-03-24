@@ -48,7 +48,7 @@ class RuTracker(object):
 			self.login(s)
 		return s
 
-	def check_params(self):
+	def check_settings(self):
 		if not self.username or not self.password or not self.baseurl:
 			return False
 		return True
@@ -109,8 +109,16 @@ class RuTracker(object):
 		return self.session.post(url, data=data, headers=headers, cookies=cookies)
 
 	def search(self, event, GP, year):
-		if not self.check_params():
+		if not self.check_settings():
 			return
+
+		# tcp://localhost:6668
+		"""
+		import ptvsd
+		ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6668))	
+		ptvsd.wait_for_attach()
+		"""
+
 
 		url = 'http://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
 		headers = {'Referer': url}
@@ -125,11 +133,6 @@ class RuTracker(object):
 
 		data = { 'fsf': '255', 'nm': s }
 
-		"""
-		import ptvsd
-		ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6666))
-		ptvsd.wait_for_attach()
-		"""
 	
 		r = self.post_request(url, headers=headers, data=data)
 		if r.ok:
@@ -145,13 +148,18 @@ class RuTracker(object):
 				if seeds == '0':
 					continue
 
+				go_next = False
 				for p in RuTracker.parts(title):
 					if u'практика' in p:
 						m = re.search('(\d)', p)
 						if m:
 							n = m.group(1)
 							if n not in event:
-								return
+								go_next = True
+								break
+
+				if go_next:
+					continue
 
 				yield {
 					'title': title,	'info': info,
