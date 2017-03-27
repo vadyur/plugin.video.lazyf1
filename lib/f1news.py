@@ -89,7 +89,7 @@ class F1News(object):
 				except AttributeError:
 					continue
 					
-				yield {'label': title, 'thumb': '', 'is_playable': False, 
+				yield {'label': title, 'is_playable': False, 
 						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season='2017', GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
 
 	def calendar(self, year, get_url):

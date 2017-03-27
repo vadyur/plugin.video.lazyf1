@@ -21,18 +21,23 @@ _addon = xbmcaddon.Addon()
 def root(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend')},
-			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season')},
-			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons')},
-			{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live')}
+	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
+
+	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend'), 'thumb': flag},
+			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag},
+			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag},
+			{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag}
 	]
 
+def weekend_item(item):
+	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
+	return dict({'thumb': flag}, **item)
 
 @plugin.action()
 def weekend(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	return [ item for item in f1news.weekend_schedule(plugin.get_url) ]
+	return [ weekend_item(item) for item in f1news.weekend_schedule(plugin.get_url) ]
 
 
 @plugin.action()
