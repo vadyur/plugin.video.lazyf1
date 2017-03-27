@@ -121,7 +121,7 @@ class RuTracker(object):
 		import ptvsd
 		ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6668))	
 		ptvsd.wait_for_attach()
-		"""
+		# """
 
 
 		url = 'http://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
@@ -138,7 +138,11 @@ class RuTracker(object):
 		if r.ok:
 			bs = BeautifulSoup(clean_html(r.text), 'html.parser')
 			for tr in bs.find_all('tr', class_='hl-tr'):
-				title = tr.find('a', class_='torTopic').get_text()
+				try:
+					title = tr.find('a', class_='torTopic').get_text()
+				except AttributeError:
+					continue
+
 				if str(year) not in title:
 					continue
 				indx = title.find('[')
