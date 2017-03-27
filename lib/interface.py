@@ -76,14 +76,27 @@ def search_item(item):
 	#title = title + '\n' + item['info']
 	w = 0
 	h = 0
+	flag = 'SD'
+
+	if 'HDTV' in item['info'] or 'WEB-DL HD' in item['info']:
+		flag = 'hd'
+
 	if '720p' in item['info']:
 		w = 1280
 		h = 720
 		title += ' / 720p'
+		flag = '720'
 	elif '1080' in item['info']:
 		w = 1920
 		h = 1080
 		title += ' / 1080'
+		flag = '1080'
+	elif '400p' in item['info']:
+		w = 720
+		h = 400
+		title += ' / 400'
+		flag = 'sd'
+
 
 	lang = ''
 	part = item['info'].split(',')[-1].lower()
@@ -97,7 +110,15 @@ def search_item(item):
 		info['height'] = h
 
 	stream_info = { 'video': info }
+
+	infovideo = { 'genre': 'sport', 
+				'title': title,
+				'studio': 'Formula One Management',
+				'plot': item['info'] }
+
+
 	return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info, 
+			'info': {'video': infovideo }, 'thumb': os.path.join(plugin.path, 'resources', 'flags', 'resolution', flag + '.png'),
 			'url': plugin.get_url(action='list_torrent', dl_link=item['dl_link'])
 	}
 
@@ -109,6 +130,7 @@ def search(params):
 
 	items = [search_item(item) for item in rutracker.search(params['event'].decode('utf-8'), params['GP'].decode('utf-8'), params['season'])] 
 	if len(items) > 0: 
+		xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 		return items
 	else:
 		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
