@@ -135,7 +135,7 @@ def search(params):
 
 	items = [search_item(item) for item in rutracker.search(params['event'].decode('utf-8'), params['GP'].decode('utf-8'), params['season'])] 
 	if len(items) > 0: 
-		xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+		xbmcplugin.setContent(int(sys.argv[1]), 'files')
 		return items
 	else:
 		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
@@ -153,50 +153,17 @@ def list_torrent(params):
 	path = xbmc.translatePath('special://temp/lazyf1.torrent').decode('utf-8')
 	rutracker.torrent_download(params['dl_link'], path)
 
-	#import urllib
-	#url = 'plugin://plugin.video.yatp/?action=list_files&torrent=' + urllib.quote(path2url(path))
-	#url = 'plugin://plugin.video.torrenter/?action=playSTRM&url=' + urllib.quote(path2url(path))
+	plugin.torrents_path = torrents_path
 
-	try:
-		import torrent2httpplayer, time
-		plugin.torrents_path = torrents_path
-		player = torrent2httpplayer.Torrent2HTTPPlayer(plugin)
+	info_dialog = xbmcgui.DialogProgress()
+	info_dialog.create(_addon_title_)
 
-		player.AddTorrent(path)
-		while not player.CheckTorrentAdded():
-			time.sleep(1)
+	from player import play_torrent
+	play_torrent(path, plugin, info_dialog, _addon_title_)
 
-		files = player.GetLastTorrentData()['files']
-		playable_item = files[0]
+	info_dialog.update(0, '', '')
+	info_dialog.close()
 
-		player.StartBufferFile(0)
-
-		while not player.CheckBufferComplete():
-			time.sleep(1)
-
-		playable_url = player.GetStreamURL(playable_item)
-		debug(playable_url)
-
-		handle = int(sys.argv[1])
-		list_item = xbmcgui.ListItem(path=playable_url)
-
-		xbmc_player = xbmc.Player()
-		xbmcplugin.setResolvedUrl(handle, True, list_item)
-
-		while not xbmc_player.isPlaying():
-			xbmc.sleep(300)
-
-		debug('!!!!!!!!!!!!!!!!! Start PLAYING !!!!!!!!!!!!!!!!!!!!!')
-
-		# Wait until playing finished or abort requested
-		while not xbmc.abortRequested and xbmc_player.isPlaying():
-			player.loop()
-			xbmc.sleep(1000)
-
-		debug('!!!!!!!!!!!!!!!!! END PLAYING !!!!!!!!!!!!!!!!!!!!!')
-	finally:
-		player.close()
-	#return url
 
 @plugin.action()
 def play(params):
