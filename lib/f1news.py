@@ -49,6 +49,7 @@ class F1News(object):
 	def __init__(self, res_path, *args, **kwargs):
 		self.root_soap = self._get_root_soap()
 		self.res_path = res_path
+		self._preview_soap = None
 		return super(F1News, self).__init__(*args, **kwargs)
 
 	def _get_root_soap(self):
@@ -79,6 +80,37 @@ class F1News(object):
 	def weekend_title(self):
 		if self.root_soap:
 			return self.root_soap.select('div.widget.stream.widget_danger > div.widget_head > div > span')[0].get_text()
+
+	def weekend_url(self):
+		if self.root_soap:
+			tbl = self.root_soap.select('div.widget.stream.widget_danger > div.widget_body.stream_list > div > table')[0]
+			for a in tbl.find_all('a'):
+				if 'preview.shtml' in a['href']:
+					return a['href']
+		return None
+
+	@property
+	def preview_soap(self):
+		if not self._preview_soap:
+			url = self.weekend_url()
+			if url:
+				resp = requests.get(url, headers=self.headers, verify=False)
+				if resp.status_code == requests.codes.ok:
+					html = clean_html(resp.text)
+					self._preview_soap = BeautifulSoup(html, 'html.parser')
+				
+		return self._preview_soap
+
+	def weekend_fanart(self):
+		if self.preview_soap:
+			div = self.preview_soap.find('div', class_="post_head")
+			if div:
+				div = div.find('div', class_="post_thumbnail")
+				if div:
+					img = div.find('img')
+					if img:
+						return img['src']
+		return ''
 
 	def weekend_schedule(self, get_url):
 		if self.root_soap:

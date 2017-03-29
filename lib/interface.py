@@ -23,10 +23,10 @@ def root(params):
 
 	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
 
-	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend'), 'thumb': flag},
-			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag},
-			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag},
-			{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag}
+	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': f1news.weekend_fanart()},
+			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'current/bg.jpg'},
+			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'old/bg.jpg'},
+			{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag, 'fanart': os.path.join(plugin.path, 'resources', 'live.jpg')}
 	]
 
 def weekend_item(item):
@@ -48,7 +48,7 @@ def curr_season(params):
 
 def item_by_year(year):
 	return {'label': str(year), 
-			'thumb': lazyf1images.seasons() +'current/bg.jpg', 
+			'thumb': lazyf1images.seasons() +'old/bg.jpg', 
 			'fanart': lazyf1images.seasons() + str(year) + '/bg.jpg', 
 			'is_playable': False, 'url': plugin.get_url(action='show_season', year=str(year))}
 
