@@ -18,5 +18,14 @@
     <platform>all</platform>
     <summary lang="ru">Formula 1 для удобного просмотра</summary>
     <description lang="ru">Formula 1 для удобного просмотра</description>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+      <screenshot>resources/screenshot-01.jpg</screenshot>
+      <screenshot>resources/screenshot-02.jpg</screenshot>
+      <screenshot>resources/screenshot-03.jpg</screenshot>
+      <screenshot>resources/screenshot-04.jpg</screenshot>
+      <screenshot>resources/screenshot-05.jpg</screenshot>
+    </assets>
   </extension>
 </addon>
