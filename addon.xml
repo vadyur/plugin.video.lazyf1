@@ -16,7 +16,9 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
+    <summary lang="en">Best for watch Formula 1 Championship (Russian content)</summary>
     <summary lang="ru">Formula 1 для удобного просмотра</summary>
+    <description lang="en">Best for watch Formula 1 Championship (Russian content)</description>
     <description lang="ru">Formula 1 для удобного просмотра</description>
     <assets>
       <icon>resources/icon.png</icon>
