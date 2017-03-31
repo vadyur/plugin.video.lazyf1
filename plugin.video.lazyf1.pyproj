@@ -45,6 +45,7 @@
     <Content Include="resources\settings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="lib\aceplayer.py" />
     <Compile Include="lib\base.py">
       <SubType>Code</SubType>
     </Compile>
@@ -55,11 +56,13 @@
     <Compile Include="lib\filesystem.py" />
     <Compile Include="lib\interface.py" />
     <Compile Include="lib\log.py" />
+    <Compile Include="lib\player.py" />
     <Compile Include="lib\rutracker.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="lib\torrent2httpplayer.py" />
     <Compile Include="lib\torrentplayer.py" />
+    <Compile Include="lib\yatpplayer.py" />
     <Compile Include="lib\__init__.py" />
     <Compile Include="main.py" />
     <Compile Include="resources\seasons\make_bg.py" />
