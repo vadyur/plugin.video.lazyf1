@@ -10,6 +10,8 @@
     <import addon="script.module.requests" optional="false"/>
     <import addon="script.module.simpleplugin"/>
     <import addon="script.module.pyxbmct" version="1.1.4"/>
+    <import addon="script.module.vsdbg"/>
+
   </requires>
   <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
