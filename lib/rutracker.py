@@ -184,17 +184,25 @@ class RuTracker(object):
 	
 	@staticmethod
 	def clean_title(title, year=None):
+		import vsdbg
+		#vsdbg._bp()
+
 		parts = RuTracker.parts(title)
+
+		skips = [u'формула', u'сезон', u'этап', u'Формула', u'Сезон', u'Этап', u'ФОРМУЛА', u'СЕЗОН', u'ЭТАП']
 
 		if len(parts) > 1:
 			new = []
 			for part in parts:
-				if u'формула' in part.lower():
+				_part = part.lower()
+
+				do_cont = False
+				for skip in skips:
+					if skip in _part:
+						do_cont = True
+				if do_cont:
 					continue
-				if u'сезон' in part.lower():
-					continue
-				if u'этап' in part.lower():
-					continue
+
 				if re.search(r'\d+/\d\d', part):
 					continue
 				if year and str(year) in part:
