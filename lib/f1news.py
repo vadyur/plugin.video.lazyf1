@@ -75,7 +75,7 @@ class F1News(object):
 
 	@property
 	def curr_champ_soap(self, year):
-		return self.champ_soap(2017)
+		return self.champ_soap(2018)
 
 	def weekend_title(self):
 		if self.root_soap:
@@ -122,7 +122,7 @@ class F1News(object):
 					continue
 					
 				yield {'label': title, 'is_playable': False, 
-						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season='2017', GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
+						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season='2018', GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
 
 	def calendar(self, year, get_url):
 		year = str(year)
