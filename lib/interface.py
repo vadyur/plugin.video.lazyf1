@@ -44,7 +44,7 @@ def weekend(params):
 def curr_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	return [ item for item in f1news.calendar(2017, plugin.get_url) ]
+	return [ item for item in f1news.calendar(2018, plugin.get_url) ]
 
 def item_by_year(year):
 	return {'label': str(year), 
@@ -56,7 +56,7 @@ def item_by_year(year):
 def prev_seasons(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 
-	return [item_by_year(item) for item in range(2016, 1999-1, -1)]
+	return [item_by_year(item) for item in range(2017, 1999-1, -1)]
 
 @plugin.action()
 def show_season(params):
