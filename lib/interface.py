@@ -200,13 +200,7 @@ def channelName2uniqueId(channelname):
 				return channels['uniqueid']
 	return 0 
 
-def get_channels():
-	"""
-	import ptvsd
-	ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6666))
-	ptvsd.wait_for_attach()
-	"""
-
+def get_channels_pvr():
 	ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups", "params":{"channeltype":"tv"} }'))
 	debug(ret)
 	try:
@@ -227,6 +221,31 @@ def get_channels():
 				channel['is_folder'] = False
 				yield channel
 
+def get_channels_ttv():
+	with open(os.path.join(plugin.path, 'resources', 'live', 'LazyF1-TTV.m3u'), 'r') as m3u:
+		for line in m3u.readlines():
+			if line.startswith('#EXTINF'):
+				channel = {}
+				channel['label'] = line.split(',')[-1]
+			elif line.startswith('http:'):
+				#channel['url'] = plugin.get_url(action='ttv_play', href=line.strip('\r\n'))
+				channel['url'] = line.strip('\r\n')
+				channel['is_folder'] = False
+				yield channel
+			
+
+def get_channels():
+	"""
+	import ptvsd
+	ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6666))
+	ptvsd.wait_for_attach()
+	"""
+
+	if plugin.tv_source == 'PVR':
+		return get_channels_pvr()
+	elif plugin.tv_source == 'Torrent-TV':
+		return get_channels_ttv()
+
 @plugin.action()
 def live(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
@@ -245,3 +264,7 @@ def tvchannel(params):
 			"params": {"item": {"channelid": int(params['channelid'])}}
 			}
 	res = jsonrpc(query) 
+
+@plugin.action()
+def ttv_play(params):
+	return Plugin.resolve_url(params['href'], succeeded=True)

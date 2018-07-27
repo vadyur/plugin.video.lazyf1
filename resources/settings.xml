@@ -31,7 +31,7 @@
 	</category>
   
   <category label="ТВ">
-    <setting label="Источник" id="tv_source" type="select" values="PVR" default="PVR" />
+    <setting label="Источник" id="tv_source" type="select" values="PVR|Torrent-TV" default="PVR" />
   </category>
 
 </settings>
