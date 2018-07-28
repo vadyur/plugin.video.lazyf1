@@ -32,6 +32,7 @@
   
   <category label="ТВ">
     <setting label="Источник" id="tv_source" type="select" values="PVR|Torrent-TV" default="PVR" />
+    <setting label="IP-адрес AceStream" type="ipaddress" id="ipaddress" default="127.0.0.1" visible="eq(-1,Torrent-TV)"/>
   </category>
 
 </settings>

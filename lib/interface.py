@@ -228,8 +228,7 @@ def get_channels_ttv():
 				channel = {}
 				channel['label'] = line.split(',')[-1]
 			elif line.startswith('http:'):
-				#channel['url'] = plugin.get_url(action='ttv_play', href=line.strip('\r\n'))
-				channel['url'] = line.strip('\r\n')
+				channel['url'] = line.strip('\r\n').replace('127.0.0.1', plugin.ipaddress)
 				channel['is_folder'] = False
 				yield channel
 			
@@ -265,6 +264,3 @@ def tvchannel(params):
 			}
 	res = jsonrpc(query) 
 
-@plugin.action()
-def ttv_play(params):
-	return Plugin.resolve_url(params['href'], succeeded=True)
