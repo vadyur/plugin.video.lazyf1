@@ -1,9 +1,9 @@
 #EXTM3U
-#EXTINF:-1 group-title="Спорт" tvg-name="Матч_ТВ" ttv-logo="Матч ТВ.png",Матч ТВ (Спорт)
-http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fttv_cid_83b59f.acelive&.mp4
-#EXTINF:-1 group-title="Спорт" tvg-name="Матч_ТВ_HD" ttv-logo="Матч ТВ HD.png",Матч ТВ HD (Спорт)
-http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fttv_cid_3afef9.acelive&.mp4
-#EXTINF:-1 group-title="Спорт" tvg-name="Матч!_Арена" ttv-logo="Матч! Арена.png",Матч! Арена (Спорт)
-http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fttv_cid_a26429.acelive&.mp4
-#EXTINF:-1 group-title="Спорт" tvg-name="Матч!_Арена_HD" ttv-logo="Матч! Арена HD.png",Матч! Арена HD (Спорт)
-http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fttv_cid_4d9058.acelive&.mp4
+#EXTINF:-1 group-title="sport" tvg-name="Матч_ТВ" ttv-logo="Матч ТВ.png",Матч ТВ (sport)
+http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fas_cid_cd3ba8.acelive&.mp4
+#EXTINF:-1 group-title="sport" tvg-name="Матч_ТВ_HD" ttv-logo="Матч ТВ HD.png",Матч ТВ HD (sport)
+http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fas_cid_fb9b11.acelive&.mp4
+#EXTINF:-1 group-title="sport" tvg-name="Матч!_Арена" ttv-logo="Матч! Арена.png",Матч! Арена (sport)
+http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fas_cid_f59b77.acelive&.mp4
+#EXTINF:-1 group-title="sport" tvg-name="Матч!_Арена_HD" ttv-logo="Матч! Арена HD.png",Матч! Арена HD (sport)
+http://127.0.0.1:6878/ace/getstream?url=http%3A%2F%2Fpomoyka.win%2Ftrash%2Fttv-list%2Facelive%2Fas_cid_5a2b16.acelive&.mp4
