@@ -23,7 +23,7 @@ if True: # len(sys.argv) < 2:
 if __name__ == '__main__':
 	import vsdbg
 
-	vsdbg._bp()
+	#vsdbg._bp()
 
 	import lib.interface
 	lib.interface.plugin.run()

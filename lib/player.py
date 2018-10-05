@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import torrent2httpplayer, aceplayer, yatpplayer
+import torrent2httpplayer, aceplayer, yatpplayer, torrserverplayer
 import time, sys
 import xbmc, xbmcgui, xbmcplugin
 from log import debug
@@ -16,6 +16,8 @@ def play_torrent(path, settings, info_dialog, title_dialog):
 			player = yatpplayer.YATPPlayer()
 		elif settings.torrent_player == 'Ace Stream':
 			player = aceplayer.AcePlayer(settings)
+		elif settings.torrent_player == 'TorrServer':
+			player = torrserverplayer.TorrServerPlayer(settings)
 
 		if not player:
 			return
