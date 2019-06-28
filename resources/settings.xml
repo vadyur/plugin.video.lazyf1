@@ -31,7 +31,11 @@
 	</category>
   
   <category label="ТВ">
-    <setting label="Источник" id="tv_source" type="select" values="PVR|Torrent-TV" default="PVR" />
+    <setting label="Источник" id="tv_source" type="enum" values="PVR|Плейлист" default="PVR" />
+    <setting label="Расположение" id="tv_playlist_source" type="enum" values="Локальный путь|Удалённый путь" visible="eq(-1,1)"/>
+    <setting subsetting="true" label="Путь к M3U" id="tv_playlist_source_local" type="file" visible="eq(-1,0)+eq(-2,1)"/>
+    <setting subsetting="true" label="Ссылка на M3U" id="tv_playlist_source_remote" type="text" visible="eq(-2,1)+eq(-3,1)"/>
+    <setting label="Список каналов" id="tv_channels" type="text" default="Матч ТВ|Матч ТВ HD|Матч! Арена|Setanta Sports +|Setanta Sports + HD"/>
     <setting label="IP-адрес AceStream" type="ipaddress" id="ipaddress" default="127.0.0.1" visible="eq(-1,Torrent-TV)"/>
   </category>
 

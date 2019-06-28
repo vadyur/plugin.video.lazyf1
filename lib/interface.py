@@ -198,7 +198,20 @@ def channelName2uniqueId(channelname):
 			if channelname.lower() in channels['label'].lower(): 
 				debug("TVHighlights found  channel %s" % (channels['label']))
 				return channels['uniqueid']
-	return 0 
+	return 0
+
+def channel_in_list(ch):
+	def lower(s):
+		if isinstance(s, str):
+			s = s.decode('utf-8')
+		s = s.lower()
+		return s
+
+	for posible in plugin.tv_channels.split('|'):
+		if lower(posible) == lower(ch):
+			return True
+
+	return False
 
 def get_channels_pvr():
 	ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups", "params":{"channeltype":"tv"} }'))
@@ -216,22 +229,35 @@ def get_channels_pvr():
 		except KeyError:
 			return
 		for channel in channels:
-			if u'Матч! Арена' in channel['label'] or u'Setanta Sports HD' in channel['label']:
+			if channel_in_list(channel['label']):
 				channel['url'] = plugin.get_url(action='tvchannel', **channel)
 				channel['is_folder'] = False
 				yield channel
 
-def get_channels_ttv():
-	with open(os.path.join(plugin.path, 'resources', 'live', 'LazyF1-TTV.m3u'), 'r') as m3u:
-		for line in m3u.readlines():
-			if line.startswith('#EXTINF'):
-				channel = {}
-				channel['label'] = line.split(',')[-1]
-			elif line.startswith('http:'):
-				channel['url'] = line.strip('\r\n').replace('127.0.0.1', plugin.ipaddress)
+def get_channels_playlist():
+	def m3u():
+		if plugin.tv_playlist_source == 0:
+			return open(plugin.tv_playlist_source_local, 'r').readlines()
+		if plugin.tv_playlist_source == 1:
+			from urllib2 import urlopen
+			return urlopen(plugin.tv_playlist_source_remote).readlines()
+
+	for line in m3u():
+		if line.startswith('#EXTINF'):
+			channel = {}
+			channel['label'] = line.split(',')[-1].strip('\r\n')
+		elif line.startswith('http:'):
+			if channel_in_list(channel['label']):
+				infovideo = {	'genre': 'sport', 
+								'title': channel['label'],
+								'studio': 'Formula One Management'}
+
+				channel['url'] = line.strip('\r\n')		#.replace('127.0.0.1', plugin.ipaddress)
 				channel['is_folder'] = False
+				channel['is_playable'] = True
+				channel['info'] = {'video': infovideo }
 				yield channel
-			
+
 
 def get_channels():
 	"""
@@ -240,10 +266,10 @@ def get_channels():
 	ptvsd.wait_for_attach()
 	"""
 
-	if plugin.tv_source == 'PVR':
+	if plugin.tv_source == 0:
 		return get_channels_pvr()
-	elif plugin.tv_source == 'Torrent-TV':
-		return get_channels_ttv()
+	elif plugin.tv_source == 1:
+		return get_channels_playlist()
 
 @plugin.action()
 def live(params):
