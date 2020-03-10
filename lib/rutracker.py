@@ -11,8 +11,8 @@ from base import clean_html
 class RuTracker(object):
 
 	season_parts = {
-		'660': [2019],
-		'1551': [ year for year in range(2012, 2018+1) ],
+		'660': [2020],
+		'1551': [ year for year in range(2012, 2019+1) ],
 		'626': [ year for year in range(1950, 2011+1) ]
 	}
 
