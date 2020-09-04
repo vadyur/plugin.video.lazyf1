@@ -24,7 +24,7 @@
     <description lang="en">Best for watch Formula 1 Championship (Russian content)</description>
     <description lang="ru">Formula 1 для удобного просмотра</description>
     <assets>
-      <icon>icon.png</icon>
+      <icon>icon512.png</icon>
       <fanart>fanart.jpg</fanart>
       <screenshot>resources/screenshot-01.jpg</screenshot>
       <screenshot>resources/screenshot-02.jpg</screenshot>
