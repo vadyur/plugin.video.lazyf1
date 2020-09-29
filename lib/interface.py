@@ -237,10 +237,13 @@ def get_channels_pvr():
 def get_channels_playlist():
 	def m3u():
 		if plugin.tv_playlist_source == 0:
-			return open(plugin.tv_playlist_source_local, 'r').readlines()
+			import filesystem
+			with filesystem.fopen(plugin.tv_playlist_source_local, 'r') as f:
+				return f.readlines()
 		if plugin.tv_playlist_source == 1:
 			from urllib2 import urlopen
 			return urlopen(plugin.tv_playlist_source_remote).readlines()
+		return []
 
 	for line in m3u():
 		if line.startswith('#EXTINF'):
