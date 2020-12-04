@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import requests
+import re
 from bs4 import BeautifulSoup
 from base import clean_html
 from log import debug
@@ -131,11 +132,16 @@ class F1News(object):
 
 			ep_number = 0
 			for tr in soap.find('table', class_='f1Table').find_all('tr'):
-				if 'firstLine' in tr['class']:
+				if 'firstLine' in tr.get('class', ''):
+					continue
+
+				TDs = tr.find_all('td')
+				t1 = TDs[0].get_text()
+				m = re.match(r'\d+[/.]\d+', t1)
+				if not m:
 					continue
 
 				ep_number += 1
-				TDs = tr.find_all('td')				
 
 				item = {'is_playable': False}
 				item['label'] = u'%s %s (%s)' % (TDs[0].get_text(), TDs[2].get_text(), TDs[3].get_text())
