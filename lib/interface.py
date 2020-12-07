@@ -246,12 +246,21 @@ def get_channels_playlist():
 			return urlopen(plugin.tv_playlist_source_remote).readlines()
 		return []
 
+	def parse_logo(line, channel):
+		import re
+		m = re.search(r'tvg-logo="(.+?)"', line)
+		if m:
+			channel['thumb'] = m.group(1)
+
+	channel = {}
 	for line in m3u():
 		#xbmc.log(line)
 		if line.startswith('#EXTINF'):
 			channel = {}
 			channel['label'] = line.split(',')[-1].strip('\r\n ')
 			#xbmc.log('channel["label"] = "{}"'.format(channel['label']))
+			parse_logo(line, channel)
+
 		elif line.startswith('http:'):
 			if channel_in_list(channel['label']):
 				infovideo = {	'genre': 'sport', 
@@ -262,6 +271,7 @@ def get_channels_playlist():
 				channel['is_folder'] = False
 				channel['is_playable'] = True
 				channel['info'] = {'video': infovideo }
+
 				yield channel
 
 
