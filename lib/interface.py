@@ -241,14 +241,17 @@ def get_channels_playlist():
 			with filesystem.fopen(plugin.tv_playlist_source_local, 'r') as f:
 				return f.readlines()
 		if plugin.tv_playlist_source == 1:
+			xbmc.log('plugin.tv_playlist_source == 1')
 			from urllib2 import urlopen
 			return urlopen(plugin.tv_playlist_source_remote).readlines()
 		return []
 
 	for line in m3u():
+		#xbmc.log(line)
 		if line.startswith('#EXTINF'):
 			channel = {}
-			channel['label'] = line.split(',')[-1].strip('\r\n')
+			channel['label'] = line.split(',')[-1].strip('\r\n ')
+			#xbmc.log('channel["label"] = "{}"'.format(channel['label']))
 		elif line.startswith('http:'):
 			if channel_in_list(channel['label']):
 				infovideo = {	'genre': 'sport', 
