@@ -3,7 +3,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from base import clean_html
+from base import clean_html, current_year
 from log import debug
 import lazyf1images
 
@@ -76,7 +76,7 @@ class F1News(object):
 
 	@property
 	def curr_champ_soap(self, year):
-		return self.champ_soap(2020)
+		return self.champ_soap(current_year())
 
 	def weekend_title(self):
 		if self.root_soap:
@@ -123,7 +123,7 @@ class F1News(object):
 					continue
 					
 				yield {'label': title, 'is_playable': False, 
-						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season='2020', GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
+						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
 
 	def calendar(self, year, get_url):
 		year = str(year)

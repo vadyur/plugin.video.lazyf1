@@ -4,6 +4,7 @@ from simpleplugin import Plugin
 from lib.f1news import F1News
 from lib.rutracker import RuTracker
 from lib.log import debug
+from lib.base import current_year
 
 import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
@@ -44,7 +45,7 @@ def weekend(params):
 def curr_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	return [ item for item in f1news.calendar(2020, plugin.get_url) ]
+	return [ item for item in f1news.calendar(current_year(), plugin.get_url) ]
 
 def item_by_year(year):
 	return {'label': str(year), 
@@ -56,7 +57,7 @@ def item_by_year(year):
 def prev_seasons(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 
-	return [item_by_year(item) for item in range(2019, 1999-1, -1)]
+	return [item_by_year(item) for item in range(current_year()-1, 1999-1, -1)]
 
 @plugin.action()
 def show_season(params):
