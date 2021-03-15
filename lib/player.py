@@ -65,7 +65,7 @@ def play_torrent(path, settings, info_dialog, title_dialog):
 		debug('!!!!!!!!!!!!!!!!! Start PLAYING !!!!!!!!!!!!!!!!!!!!!')
 
 		# Wait until playing finished or abort requested
-		while not xbmc.abortRequested and xbmc_player.isPlaying():
+		while not xbmc.Monitor().abortRequested() and xbmc_player.isPlaying():
 			player.loop()
 			xbmc.sleep(1000)
 
