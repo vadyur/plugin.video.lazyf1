@@ -3,8 +3,8 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from base import clean_html, current_year
-from log import debug
+from .base import clean_html, current_year
+from .log import debug
 import lazyf1images
 
 class F1News(object):
@@ -164,7 +164,8 @@ class F1News(object):
 							with filesystem.fopen(path, 'r') as info:
 								infovideo['plot'] = info.read()
 					else:
-						import urlparse
+						#import urlparse
+						from vdlib.util import urlparse
 						res = urlparse.urlparse(TDs[1].img['src'])
 						res = urlparse.ParseResult(res.scheme if res.scheme else 'https', res.netloc, res.path, res.params, res.query, res.fragment)
 						item['thumb'] = urlparse.urlunparse(res)  

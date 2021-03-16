@@ -6,7 +6,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 from bs4 import BeautifulSoup
-from base import clean_html, current_year
+from .base import clean_html, current_year
 
 class RuTracker(object):
 
@@ -129,7 +129,9 @@ class RuTracker(object):
 
 		event = event.lower().replace(u'тренировка', u'практика')
 
-		s = unicode(year) + ' ' + event + ' ' + GP
+		from vdlib.util.string import uni_type
+
+		s = uni_type(year) + ' ' + event + ' ' + GP
 		s = s.encode('cp1251')
 
 		data = { 'fsf': '255', 'nm': s }
@@ -184,7 +186,7 @@ class RuTracker(object):
 	
 	@staticmethod
 	def clean_title(title, year=None):
-		import vsdbg
+		#import vsdbg
 		#vsdbg._bp()
 
 		parts = RuTracker.parts(title)
