@@ -80,15 +80,23 @@ class F1News(object):
 
 	def weekend_title(self):
 		if self.root_soap:
-			return self.root_soap.select('div.widget.stream.widget_danger > div.widget_head > div > span')[0].get_text()
+			for selector in ['div.widget.stream.widget_danger > div.widget_head > div > span', 
+							'#sidebar > div.widget.widget_danger.gp-widget > div.widget_head > div > span']:
+				try:
+					return self.root_soap.select(selector)[0].get_text()
+				except IndexError:
+					pass 
+		return 'No weekend_title'
 
 	def weekend_url(self):
 		if self.root_soap:
-			tbl = self.root_soap.select('div.widget.stream.widget_danger > div.widget_body.stream_list > div > table')[0]
-			for a in tbl.find_all('a'):
-				if 'preview.shtml' in a['href']:
-					return a['href']
-		return None
+			try:
+				tbl = self.root_soap.select('div.widget.stream.widget_danger > div.widget_body.stream_list > div > table')[0]
+				for a in tbl.find_all('a'):
+					if 'preview.shtml' in a['href']:
+						return a['href']
+			except IndexError:
+				pass 
 
 	@property
 	def preview_soap(self):
