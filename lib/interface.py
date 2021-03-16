@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from simpleplugin import Plugin
-from lib.f1news import F1News
-from lib.rutracker import RuTracker
-from lib.log import debug
-from lib.base import current_year
+from vdlib.kodi.simpleplugin3_suport import create_listing
+
+from .f1news import F1News
+from .rutracker import RuTracker
+from .log import debug
+from .base import current_year
 
 import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
@@ -24,11 +26,11 @@ def root(params):
 
 	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
 
-	return [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': f1news.weekend_fanart()},
+	create_listing( [{'label': u'Уикэнд: ' + f1news.weekend_title(), 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': f1news.weekend_fanart()},
 			{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'current/bg.jpg'},
 			{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'old/bg.jpg'},
 			{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag, 'fanart': os.path.join(plugin.path, 'resources', 'live.jpg')}
-	]
+	])
 
 def weekend_item(item):
 	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
@@ -38,14 +40,14 @@ def weekend_item(item):
 def weekend(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	return [ weekend_item(item) for item in f1news.weekend_schedule(plugin.get_url) ]
+	create_listing([ weekend_item(item) for item in f1news.weekend_schedule(plugin.get_url) ])
 
 
 @plugin.action()
 def curr_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	return [ item for item in f1news.calendar(current_year(), plugin.get_url) ]
+	create_listing ([ item for item in f1news.calendar(current_year(), plugin.get_url) ])
 
 def item_by_year(year):
 	return {'label': str(year), 
@@ -57,13 +59,13 @@ def item_by_year(year):
 def prev_seasons(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 
-	return [item_by_year(item) for item in range(current_year()-1, 1999-1, -1)]
+	create_listing ([item_by_year(item) for item in range(current_year()-1, 1999-1, -1)])
 
 @plugin.action()
 def show_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	return [ item for item in f1news.calendar(params['year'], plugin.get_url) ]
+	create_listing ([ item for item in f1news.calendar(params['year'], plugin.get_url) ])
 
 def gp_event(event, params):
 	url = plugin.get_url(action='search', event=event.encode('utf-8'), season=params['season'], GP=params['GP'])
@@ -72,10 +74,10 @@ def gp_event(event, params):
 @plugin.action()
 def show_gp(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
-	return [ 
+	create_listing ([ 
 			gp_event(u'Квалификация', params),
 			gp_event(u'Гонка', params)
-	]
+	])
 
 def search_item(item):
 	title = "[%s/%s] %s" % (item['seeds'], item['leechers'], RuTracker.clean_title(item['title']))
@@ -137,13 +139,9 @@ def search(params):
 	items = [search_item(item) for item in rutracker.search(params['event'].decode('utf-8'), params['GP'].decode('utf-8'), params['season'])] 
 	if len(items) > 0: 
 		xbmcplugin.setContent(int(sys.argv[1]), 'files')
-		return items
+		create_listing (items)
 	else:
 		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
-
-def path2url(path):
-	import urllib, urlparse
-	return urlparse.urljoin('file:', urllib.pathname2url(path))
 
 def torrents_path():
 	path = xbmc.translatePath('special://temp/lazyf1')
@@ -168,7 +166,8 @@ def list_torrent(params):
 
 @plugin.action()
 def play(params):
-	return params.url
+	li = xbmcgui.ListItem(path=params.url)
+	xbmcplugin.setResolvedUrl(plugin.handle, True, li)
 
 def channelName2uniqueId(channelname):
 	query = {
@@ -243,7 +242,7 @@ def get_channels_playlist():
 				return f.readlines()
 		if plugin.tv_playlist_source == 1:
 			xbmc.log('plugin.tv_playlist_source == 1')
-			from urllib2 import urlopen
+			from vdlib.util import urlopen
 			return urlopen(plugin.tv_playlist_source_remote).readlines()
 		return []
 
@@ -292,7 +291,7 @@ def get_channels():
 def live(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	return [ item for item in get_channels() ]
+	create_listing ([ item for item in get_channels() ])
 
 def jsonrpc(query):
 	ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))	
@@ -305,5 +304,5 @@ def tvchannel(params):
 			"method": "Player.Open",
 			"params": {"item": {"channelid": int(params['channelid'])}}
 			}
-	res = jsonrpc(query) 
+	jsonrpc(query) 
 
