@@ -4,7 +4,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from .base import clean_html, current_year
-from .log import debug
+from vdlib.util.log import debug
 import lazyf1images
 
 class F1News(object):

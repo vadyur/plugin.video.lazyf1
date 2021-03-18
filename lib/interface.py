@@ -2,10 +2,11 @@
 
 from simpleplugin import Plugin
 from vdlib.kodi.simpleplugin3_suport import create_listing
+from vdlib.util import decode_string
 
 from .f1news import F1News
 from .rutracker import RuTracker
-from .log import debug
+from vdlib.util.log import debug
 from .base import current_year
 
 import lazyf1images
@@ -136,7 +137,9 @@ def search(params):
 		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
 		_addon.openSettings()
 
-	items = [search_item(item) for item in rutracker.search(params['event'].decode('utf-8'), params['GP'].decode('utf-8'), params['season'])] 
+	items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ), 
+															decode_string( params['GP'] ), 
+															params['season'])] 
 	if len(items) > 0: 
 		xbmcplugin.setContent(int(sys.argv[1]), 'files')
 		create_listing (items)
@@ -145,19 +148,21 @@ def search(params):
 
 def torrents_path():
 	path = xbmc.translatePath('special://temp/lazyf1')
-	return path.decode('utf-8')
+	return decode_string(path)
 
 @plugin.action()
 def list_torrent(params):
-	path = xbmc.translatePath('special://temp/lazyf1.torrent').decode('utf-8')
+	path = decode_string(xbmc.translatePath('special://temp/lazyf1.torrent'))
 	rutracker.torrent_download(params['dl_link'], path)
 
 	plugin.torrents_path = torrents_path
 
-	info_dialog = xbmcgui.DialogProgress()
+	from vdlib.kodi.player import OurDialogProgress
+
+	info_dialog = OurDialogProgress()
 	info_dialog.create(_addon_title_)
 
-	from player import play_torrent
+	from vdlib.kodi.player import play_torrent
 	play_torrent(path, plugin, info_dialog, _addon_title_)
 
 	info_dialog.update(0, '', '')
@@ -202,8 +207,7 @@ def channelName2uniqueId(channelname):
 
 def channel_in_list(ch):
 	def lower(s):
-		if isinstance(s, str):
-			s = s.decode('utf-8')
+		s = decode_string(s)
 		s = s.lower()
 		return s
 

@@ -36,15 +36,15 @@ class RuTracker(object):
 
 	@property
 	def username(self):
-		return self.settings.rt_username
+		return self.settings.get_setting('rt_username')
 
 	@property
 	def password(self):
-		return self.settings.rt_password
+		return self.settings.get_setting('rt_password')
 
 	@property
 	def baseurl(self):
-		return self.settings.rt_baseurl
+		return self.settings.get_setting('rt_baseurl')
 
 	def make_session(self):
 		s = requests.Session()
@@ -59,7 +59,7 @@ class RuTracker(object):
 
 	def check_login(self, session):
 		try:
-			js = json.loads(self.settings.rt_cookies)
+			js = json.loads(self.settings.get_setting('rt_cookies'))
 		except ValueError:
 			return False
 		"""
@@ -226,18 +226,11 @@ class RuTracker(object):
 					}
 		data = { 't': t	}
 
-		js = json.loads(self.settings.rt_cookies)
+		js = json.loads(self.settings.get_setting('rt_cookies'))
 	
-
 		r = self.post_request(url, headers=headers, data=data, cookies=js)
 		if r.ok:
 			with open(path, 'wb') as fd:
 				for chunk in r.iter_content(chunk_size=128):
 					fd.write(chunk)			
 
-if __name__ == '__main__':
-	try:
-		import rutracker_test
-		rutracker_test.test()
-	except ImportError:
-		pass
