@@ -81,7 +81,8 @@ class F1News(object):
 	def weekend_title(self):
 		if self.root_soap:
 			for selector in ['div.widget.stream.widget_danger > div.widget_head > div > span', 
-							'#sidebar > div.widget.widget_danger.gp-widget > div.widget_head > div > span']:
+							'#sidebar > div.widget.widget_danger.gp-widget > div.widget_head > div > span',
+							'#sidebar > div.widget.stream.u-for-desktop > div > div > div.stream_title']:
 				try:
 					return self.root_soap.select(selector)[0].get_text()
 				except IndexError:
