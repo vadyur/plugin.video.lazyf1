@@ -3,8 +3,8 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from base import clean_html, current_year
-from log import debug
+from .base import clean_html, current_year
+from vdlib.util.log import debug
 import lazyf1images
 
 class F1News(object):
@@ -81,7 +81,8 @@ class F1News(object):
 	def weekend_title(self):
 		if self.root_soap:
 			for selector in ['div.widget.stream.widget_danger > div.widget_head > div > span', 
-							'#sidebar > div.widget.widget_danger.gp-widget > div.widget_head > div > span']:
+							'#sidebar > div.widget.widget_danger.gp-widget > div.widget_head > div > span',
+							'#sidebar > div.widget.stream.u-for-desktop > div > div > div.stream_title']:
 				try:
 					return self.root_soap.select(selector)[0].get_text()
 				except IndexError:
@@ -123,15 +124,21 @@ class F1News(object):
 
 	def weekend_schedule(self, get_url):
 		if self.root_soap:
-			for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
-				tr = a.parent.parent
+			#for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
+			for div in self.root_soap.find_all('div', class_='gp-widget-item__name'):
+
+				if not div.find_next_sibling('div', class_='gp-widget-item__date'):
+					continue
+
+				#tr = a.parent.parent
 				try:
-					title = tr.find('td').get_text()
+					#title = tr.find('td').get_text()
+					title = div.span.get_text()
 				except AttributeError:
 					continue
-					
+
 				yield {'label': title, 'is_playable': False, 
-						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
+						'url': get_url(action='search', event=title.strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().strip('\n\r\t '))}
 
 	def calendar(self, year, get_url):
 		year = str(year)
@@ -172,7 +179,8 @@ class F1News(object):
 							with filesystem.fopen(path, 'r') as info:
 								infovideo['plot'] = info.read()
 					else:
-						import urlparse
+						#import urlparse
+						from vdlib.util import urlparse
 						res = urlparse.urlparse(TDs[1].img['src'])
 						res = urlparse.ParseResult(res.scheme if res.scheme else 'https', res.netloc, res.path, res.params, res.query, res.fragment)
 						item['thumb'] = urlparse.urlunparse(res)  
