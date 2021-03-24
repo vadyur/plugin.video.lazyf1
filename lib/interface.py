@@ -211,7 +211,7 @@ def channel_in_list(ch):
 		s = s.lower()
 		return s
 
-	for posible in plugin.tv_channels.split('|'):
+	for posible in plugin.get_setting('tv_channels').split('|'):
 		if lower(posible) == lower(ch):
 			return True
 
@@ -240,14 +240,14 @@ def get_channels_pvr():
 
 def get_channels_playlist():
 	def m3u():
-		if plugin.tv_playlist_source == 0:
+		if plugin.get_setting('tv_playlist_source') == 0:
 			import filesystem
-			with filesystem.fopen(plugin.tv_playlist_source_local, 'r') as f:
+			with filesystem.fopen(plugin.get_setting('tv_playlist_source_local'), 'r') as f:
 				return f.readlines()
-		if plugin.tv_playlist_source == 1:
+		if plugin.get_setting('tv_playlist_source') == 1:
 			xbmc.log('plugin.tv_playlist_source == 1')
 			from vdlib.util import urlopen
-			return urlopen(plugin.tv_playlist_source_remote).readlines()
+			return urlopen(plugin.get_setting('tv_playlist_source_remote')).readlines()
 		return []
 
 	def parse_logo(line, channel):
@@ -271,7 +271,7 @@ def get_channels_playlist():
 								'title': channel['label'],
 								'studio': 'Formula One Management'}
 
-				channel['url'] = line.strip('\r\n')		#.replace('127.0.0.1', plugin.ipaddress)
+				channel['url'] = line.strip('\r\n')
 				channel['is_folder'] = False
 				channel['is_playable'] = True
 				channel['info'] = {'video': infovideo }
@@ -286,9 +286,9 @@ def get_channels():
 	ptvsd.wait_for_attach()
 	"""
 
-	if plugin.tv_source == 0:
+	if plugin.get_setting('tv_source') == 0:
 		return get_channels_pvr()
-	elif plugin.tv_source == 1:
+	elif plugin.get_setting('tv_source') == 1:
 		return get_channels_playlist()
 
 @plugin.action()
