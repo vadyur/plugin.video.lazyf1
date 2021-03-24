@@ -124,13 +124,19 @@ class F1News(object):
 
 	def weekend_schedule(self, get_url):
 		if self.root_soap:
-			for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
-				tr = a.parent.parent
+			#for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
+			for div in self.root_soap.find_all('div', class_='gp-widget-item__name'):
+
+				if not div.find_next_sibling('div', class_='gp-widget-item__date'):
+					continue
+
+				#tr = a.parent.parent
 				try:
-					title = tr.find('td').get_text()
+					#title = tr.find('td').get_text()
+					title = div.span.get_text()
 				except AttributeError:
 					continue
-					
+
 				yield {'label': title, 'is_playable': False, 
 						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
 
