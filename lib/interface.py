@@ -241,7 +241,7 @@ def get_channels_pvr():
 def get_channels_playlist():
 	def m3u():
 		if plugin.get_setting('tv_playlist_source') == 0:
-			import filesystem
+			from vdlib.util import filesystem
 			with filesystem.fopen(plugin.get_setting('tv_playlist_source_local'), 'r') as f:
 				return f.readlines()
 		if plugin.get_setting('tv_playlist_source') == 1:
