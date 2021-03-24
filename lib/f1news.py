@@ -138,7 +138,7 @@ class F1News(object):
 					continue
 
 				yield {'label': title, 'is_playable': False, 
-						'url': get_url(action='search', event=title.encode('utf-8').strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().encode('utf-8').strip('\n\r\t '))}
+						'url': get_url(action='search', event=title.strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().strip('\n\r\t '))}
 
 	def calendar(self, year, get_url):
 		year = str(year)
