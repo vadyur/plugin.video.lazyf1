@@ -137,7 +137,7 @@ class F1News(object):
 							title = div_name.a.get_text()
 							action = 'search'
 						else:
-							title = colored('{} [{}]'.format(div_name.span.get_text(), div_time.get_text()), 'FF808080')
+							title = colored(u'{} [{}]'.format(div_name.span.get_text(), div_time.get_text()), 'FF808080')
 							action = 'nothing'
 					except AttributeError:
 						continue
