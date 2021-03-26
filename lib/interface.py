@@ -146,6 +146,10 @@ def search(params):
 	else:
 		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
 
+@plugin.action()
+def nothing(params):
+	xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
+
 def torrents_path():
 	path = xbmc.translatePath('special://temp/lazyf1')
 	return decode_string(path)
