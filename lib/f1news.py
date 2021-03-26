@@ -123,22 +123,31 @@ class F1News(object):
 		return ''
 
 	def weekend_schedule(self, get_url):
-		if self.root_soap:
-			#for a in self.root_soap.find_all('a', class_='red', attrs={'href': '/lc/'}):
-			for div in self.root_soap.find_all('div', class_='gp-widget-item__name'):
+		def _weekend_schedule(occurred_event):
+			if self.root_soap:
+				for div_name in self.root_soap.find_all('div', class_='gp-widget-item__name'):
 
-				if not div.find_next_sibling('div', class_='gp-widget-item__date'):
-					continue
+					div_time = div_name.find_next_sibling('div', class_='gp-widget-item__date')
+					if not div_time:
+						continue
 
-				#tr = a.parent.parent
-				try:
-					#title = tr.find('td').get_text()
-					title = div.span.get_text()
-				except AttributeError:
-					continue
+					from vdlib.util.string import colored
+					try:
+						if occurred_event:
+							title = div_name.a.get_text()
+							action = 'search'
+						else:
+							title = colored('{} [{}]'.format(div_name.span.get_text(), div_time.get_text()), 'FF808080')
+							action = 'nothing'
+					except AttributeError:
+						continue
 
-				yield {'label': title, 'is_playable': False, 
-						'url': get_url(action='search', event=title.strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().strip('\n\r\t '))}
+					yield {'label': title, 'is_playable': False, 
+							'url': get_url(action=action, event=title.strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().strip('\n\r\t '))}
+		for item in reversed(list(_weekend_schedule(True))):
+			yield item
+		for item in _weekend_schedule(False):
+			yield item
 
 	def calendar(self, year, get_url):
 		year = str(year)
