@@ -1,18 +1,26 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+
 import requests, re, json
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from vdlib.util.log import debug
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 from bs4 import BeautifulSoup
-from .base import clean_html, current_year
+
+try:
+	from .base import clean_html, current_year
+except ImportError:
+	from base import clean_html, current_year	# type: ignore
 
 class RuTracker(object):
 
 	season_parts = {
 		'660': [current_year()],
-		'1551': [ year for year in range(2012, current_year()+1) ],
+		'1551': [ year for year in range(2012, current_year()) ],
 		'626': [ year for year in range(1950, 2011+1) ]
 	}
 
@@ -123,7 +131,6 @@ class RuTracker(object):
 		ptvsd.wait_for_attach()
 		# """
 
-
 		url = 'http://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
 		headers = {'Referer': url}
 
@@ -135,6 +142,8 @@ class RuTracker(object):
 		s = s.encode('cp1251')
 
 		data = { 'fsf': '255', 'nm': s }
+
+		debug(url)
 
 		r = self.post_request(url, headers=headers, data=data)
 		if r.ok:
