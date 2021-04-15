@@ -46,6 +46,15 @@ class F1News(object):
 		}
 	}
 
+	root_url = 'https://www.f1news.ru'
+
+	@staticmethod
+	def make_url(url):
+		if url.startswith(F1News.root_url):
+			return url
+
+		return F1News.root_url + url
+
 
 	def __init__(self, res_path, *args, **kwargs):
 		self.root_soap = self._get_root_soap()
@@ -54,14 +63,14 @@ class F1News(object):
 		return super(F1News, self).__init__(*args, **kwargs)
 
 	def _get_root_soap(self):
-		resp = requests.get('https://www.f1news.ru', headers=self.headers, verify=False)
+		resp = requests.get(self.root_url, headers=self.headers, verify=False)
 		if resp.status_code == requests.codes.ok:
 			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
 			return soup
 
 	def _get_champ_soap(self, year):
-		resp = requests.get('https://www.f1news.ru/Championship/%s/' % str(year), headers=self.headers, verify=False)
+		resp = requests.get(self.make_url('/Championship/%s/') % str(year), headers=self.headers, verify=False)
 		if resp.status_code == requests.codes.ok:
 			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
@@ -88,10 +97,10 @@ class F1News(object):
 	def weekend_url(self):
 		if self.root_soap:
 			try:
-				tbl = self.root_soap.select('div.widget.stream.widget_danger > div.widget_body.stream_list > div > table')[0]
-				for a in tbl.find_all('a'):
+				ul = self.root_soap.find('ul', class_='gp-widget-menu')
+				for a in ul.find_all('a'):
 					if 'preview.shtml' in a['href']:
-						return a['href']
+						return self.make_url(a['href'])
 			except IndexError:
 				pass 
 
