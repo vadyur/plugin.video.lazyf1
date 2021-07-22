@@ -2,21 +2,21 @@
 
 from __future__ import absolute_import
 
-import requests, re, json
-
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
+import re, json
 from vdlib.util.log import debug
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+from vdlib.scrappers.rutracker import RuTrackerBase
 
 from bs4 import BeautifulSoup
 
 try:
-	from .base import clean_html, current_year
+	from .base import current_year
 except ImportError:
-	from base import clean_html, current_year	# type: ignore
+	from base import current_year	# type: ignore
 
-class RuTracker(object):
+from vdlib.scrappers.base import clean_html
+
+class RuTracker(RuTrackerBase):
 
 	season_parts = {
 		'660': [current_year()],
@@ -31,94 +31,6 @@ class RuTracker(object):
 			if year in RuTracker.season_parts[part]:
 				return part
 		return None
-
-	def __init__(self, settings):
-		self.settings = settings
-		self._session = None
-
-	@property
-	def session(self):
-		if not self._session:
-			self._session = self.make_session()
-		return self._session
-
-	@property
-	def username(self):
-		return self.settings.get_setting('rt_username')
-
-	@property
-	def password(self):
-		return self.settings.get_setting('rt_password')
-
-	@property
-	def baseurl(self):
-		return self.settings.get_setting('rt_baseurl')
-
-	def make_session(self):
-		s = requests.Session()
-		if not self.check_login(s):
-			self.login(s)
-		return s
-
-	def check_settings(self):
-		if not self.username or not self.password or not self.baseurl:
-			return False
-		return True
-
-	def check_login(self, session):
-		try:
-			js = json.loads(self.settings.get_setting('rt_cookies'))
-		except ValueError:
-			return False
-		"""
-		except BaseException:
-			import xbmc
-			xbmc.log(self.settings.rt_cookies)
-			return False
-		"""
-		resp = session.get('http://%s/forum/index.php' % self.baseurl, cookies=js)
-		if re.compile('<input.+?type="text" name="login_username"').search(resp.text):
-			return False
-		return True
-
-	def login(self, session):
-		pageContent = session.get('http://%s/forum/login.php' % (self.baseurl))
-		captchaMatch = re.compile(
-			'(//static\.t-ru\.org/captcha/\d+/\d+/[0-9a-f]+\.jpg\?\d+).+?name="cap_sid" value="(.+?)".+?name="(cap_code_[0-9a-f]+)"',
-			re.DOTALL | re.MULTILINE).search(pageContent.text)
-		data = {
-			'login_password': self.password,
-			'login_username': self.username,
-			'login': '%C2%F5%EE%E4',
-			'redirect': 'index.php'
-		}
-		if captchaMatch:
-			captcha = 'http:'+captchaMatch.group(1)
-			#captchaCode = self.askCaptcha('http:'+captchaMatch.group(1))
-			captchaCode = ''
-			if captchaCode:
-				data['cap_sid'] = captchaMatch.group(2)
-				data[captchaMatch.group(3)] = captchaCode
-			else:
-				return False
-			
-		r = session.post(
-			'http://%s/forum/login.php' % self.baseurl,
-			data=data,
-			allow_redirects = False
-		)
-
-		if r.ok:
-			c = requests.utils.dict_from_cookiejar(r.cookies)
-			self.settings.set_setting('rt_cookies', json.dumps(c))
-
-			return c
-
-	def get_request(self, url, data=None, headers=None, cookies=None):
-		return self.session.get(url, data=data, headers=headers, cookies=cookies)
-
-	def post_request(self, url, data=None, headers=None, cookies=None):
-		return self.session.post(url, data=data, headers=headers, cookies=cookies)
 
 	def search(self, event, GP, year):
 		if not self.check_settings():
@@ -225,21 +137,4 @@ class RuTracker(object):
 		else:
 			return title
 
-	def torrent_download(self, url, path):
-		t = re.search('(\d+)$', url).group(1)
-		referer = 'http://%s/forum/viewtopic.php?t=%s' % (self.baseurl, t)
-		headers = {'Referer': referer,
-					'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 YaBrowser/15.10.2454.3658 Safari/537.36',
-					'Origin': 'http://%s' % self.baseurl, 
-					'Upgrade-Insecure-Requests': '1'
-					}
-		data = { 't': t	}
-
-		js = json.loads(self.settings.get_setting('rt_cookies'))
-	
-		r = self.post_request(url, headers=headers, data=data, cookies=js)
-		if r.ok:
-			with open(path, 'wb') as fd:
-				for chunk in r.iter_content(chunk_size=128):
-					fd.write(chunk)			
 
