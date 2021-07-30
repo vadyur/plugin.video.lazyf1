@@ -3,8 +3,9 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from .base import clean_html, current_year
+from .base import current_year
 from vdlib.util.log import debug
+from vdlib.scrappers.base import clean_html
 import lazyf1images
 
 class F1News(object):
@@ -89,10 +90,12 @@ class F1News(object):
 
 	def weekend_title(self):
 		if self.root_soap:
-			div = self.root_soap.find('div', class_='widget_title')
-			if div:
-				return div.span.get_text()
-		return 'No weekend_title'
+			for div in self.root_soap.find_all('div', class_='widget_title'):
+				try:
+					return div.span.get_text()
+				except AttributeError:
+					pass
+		return ''
 
 	def weekend_url(self):
 		if self.root_soap:
