@@ -3,7 +3,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from .base import current_year
+from .f1base import current_year
 from vdlib.util.log import debug
 from vdlib.scrappers.base import clean_html
 import lazyf1images

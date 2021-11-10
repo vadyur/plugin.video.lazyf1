@@ -7,7 +7,7 @@ from vdlib.util import decode_string
 from .f1news import F1News
 from .rutracker import RuTracker
 from vdlib.util.log import debug
-from .base import current_year
+from .f1base import current_year
 
 import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
@@ -141,8 +141,10 @@ def search(params):
 		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
 		_addon.openSettings()
 
+	from .f1base import gp_variants
+
 	items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ), 
-															decode_string( params['GP'] ), 
+															gp_variants(decode_string( params['GP'] )), 
 															params['season'])] 
 	if len(items) > 0: 
 		xbmcplugin.setContent(int(sys.argv[1]), 'files')
