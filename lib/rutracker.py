@@ -10,9 +10,9 @@ from vdlib.scrappers.rutracker import RuTrackerBase
 from bs4 import BeautifulSoup
 
 try:
-	from .base import current_year
+	from .f1base import current_year
 except ImportError:
-	from base import current_year	# type: ignore
+	from f1base import current_year	# type: ignore
 
 from vdlib.scrappers.base import clean_html
 
