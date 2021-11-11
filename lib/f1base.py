@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import re
 
 def current_year():
@@ -11,8 +13,8 @@ def gp_variants(GP):
 		u'азербайджан': u'Азербайджана'
 	}
 
-	key = GP.lower().replace(u'гран при', '').strip()
+	key = GP.lower().replace(u'гран при', u'').strip()
 	alt = variants.get(key)
 	if alt:
-		return '{} | {}'.format(GP, alt)
+		return u'{} | {}'.format(GP, alt)
 	return GP
