@@ -132,7 +132,7 @@ def search_item(item):
 
 	return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info, 
 			'info': {'video': infovideo }, 'thumb': os.path.join(plugin.path, 'resources', 'flags', 'resolution', flag + '.png'),
-			'url': plugin.get_url(action='list_torrent', dl_link=item['dl_link'])
+			'url': plugin.get_url(action='list_torrent', **item)
 	}
 
 @plugin.action()
@@ -162,6 +162,7 @@ def torrents_path():
 
 @plugin.action()
 def list_torrent(params):
+
 	path = decode_string(xbmc.translatePath('special://temp/lazyf1.torrent'))
 	rutracker.torrent_download(params['dl_link'], path)
 
@@ -172,8 +173,19 @@ def list_torrent(params):
 	info_dialog = OurDialogProgress()
 	info_dialog.create(_addon_title_)
 
+	def get_art():
+		page_url = params.get('page_url')
+		if page_url:
+			poster = rutracker.poster('http://{}/forum/{}'.format( rutracker.baseurl, page_url))
+			if poster:
+				return { 
+					'poster': poster,
+					'thumb': poster,
+					'icon': poster
+				}
+
 	from vdlib.kodi.player import play_torrent
-	play_torrent(path, plugin, info_dialog, _addon_title_)
+	play_torrent(path, plugin, info_dialog, _addon_title_, art=get_art)
 
 	info_dialog.update(0, '', '')
 	info_dialog.close()
