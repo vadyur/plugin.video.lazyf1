@@ -62,7 +62,9 @@ class RuTracker(RuTrackerBase):
 			bs = BeautifulSoup(clean_html(r.text), 'html.parser')
 			for tr in bs.find_all('tr', class_='hl-tr'):
 				try:
-					title = tr.find('a', class_='torTopic').get_text()
+					a = tr.find('a', class_='torTopic')
+					title = a.get_text()
+					page_url = a['href'] 
 				except AttributeError:
 					continue
 
@@ -90,10 +92,20 @@ class RuTracker(RuTrackerBase):
 
 				yield {
 					'title': title,	'info': info,
+					'page_url': page_url,
 					'seeds': seeds,
 					'leechers': tr.find('span', class_='leechmed').get_text(),
 					'dl_link': 'http://%s/forum/' % self.baseurl + tr.find('a', class_='f-dl')['href']
 				}
+
+	def poster(self, page_url):
+		req = self.get_request(page_url)
+		if req.ok:
+			bs = BeautifulSoup(clean_html(req.text), 'html.parser')
+			var = bs.find('var', class_='postImg postImgAligned img-right')
+			if var:
+				result = var.get('title')
+				return result
 
 	@staticmethod
 	def parts(title):
