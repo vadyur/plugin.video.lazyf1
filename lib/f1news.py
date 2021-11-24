@@ -3,7 +3,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from .f1base import current_year
+from .f1base import current_year, local_time_from_msk
 from vdlib.util.log import debug
 from vdlib.scrappers.base import clean_html
 import lazyf1images
@@ -144,14 +144,21 @@ class F1News(object):
 						if occurred_event:
 							title = div_name.a.get_text()
 							action = 'search'
+							event_time = None
 						else:
-							title = colored(u'{} [{}]'.format(div_name.span.get_text(), div_time.get_text()), 'FF808080')
+							event_time = local_time_from_msk( div_time.get_text() )
+							title = colored(u'{} [{}]'.format(div_name.span.get_text(), event_time), 'FF808080')
 							action = 'nothing'
 					except AttributeError:
 						continue
 
-					yield {'label': title, 'is_playable': False, 
-							'url': get_url(action=action, event=title.strip('\n\r\t '), season=str(current_year()), GP=self.weekend_title().strip('\n\r\t '))}
+					yield {	'label': title, 
+							'is_playable': False,
+							'event_time': event_time,
+							'url': get_url(action=action, 
+											event=title.strip('\n\r\t '), 
+											season=str(current_year()), 
+											GP=self.weekend_title().strip('\n\r\t '))}
 		for item in reversed(list(_weekend_schedule(True))):
 			yield item
 		for item in _weekend_schedule(False):
