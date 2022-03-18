@@ -7,7 +7,7 @@ import time
 from datetime import datetime,tzinfo,timedelta
 
 def current_year():
-	return 2021
+	return 2022
 
 def gp_variants(GP):
 	# type: (str) -> str
