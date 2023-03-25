@@ -43,7 +43,7 @@ class RuTracker(RuTrackerBase):
 		ptvsd.wait_for_attach()
 		# """
 
-		url = 'http://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
+		url = 'https://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
 		headers = {'Referer': url}
 
 		event = event.lower().replace(u'тренировка', u'практика')
@@ -95,7 +95,7 @@ class RuTracker(RuTrackerBase):
 					'page_url': page_url,
 					'seeds': seeds,
 					'leechers': tr.find('span', class_='leechmed').get_text(),
-					'dl_link': 'http://%s/forum/' % self.baseurl + tr.find('a', class_='f-dl')['href']
+					'dl_link': 'https://%s/forum/' % self.baseurl + tr.find('a', class_='f-dl')['href']
 				}
 
 	def poster(self, page_url):
