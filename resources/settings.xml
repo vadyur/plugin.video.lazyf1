@@ -18,6 +18,10 @@
     <setting label="Password" type="text"   id="rt_password" option="hidden"  default=""/>
   </category>
 
+  <category label="F1News">
+    <setting label="Использовать прокси" id="f1n_use_proxy" type="bool" default="false"/>
+  </category>
+
   <category label="P2P Сеть">
 		<setting label="Торрент проигрыватель" id="torrent_player" type="select" values="torrent2http|YATP|Ace Stream|TorrServer" default="torrent2http" /> <!---->
 		<setting label="Путь для сохранения видео файлов"	type="folder" id="storage_path"	default="" visible="eq(-1,torrent2http)" />
