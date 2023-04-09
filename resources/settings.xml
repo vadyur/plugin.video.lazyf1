@@ -20,6 +20,8 @@
 
   <category label="F1News">
     <setting label="Использовать прокси" id="f1n_use_proxy" type="bool" default="false"/>
+    <setting subsetting="true" label="Автоматически" id="f1n_proxy_auto" type="bool" visible="eq(-1,true)" default="true"/>
+    <setting subsetting="true" label="Адрес" id="f1n_proxy_address" type="text" visible="eq(-2,true)+eq(-1,false)"/>
   </category>
 
   <category label="P2P Сеть">

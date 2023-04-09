@@ -15,6 +15,8 @@ import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
 import sys, json, os
 
+from requests.exceptions import ProxyError
+
 pDialog = None
 
 def _progress_fn_(address='', show=True):
@@ -32,10 +34,18 @@ def _progress_fn_(address='', show=True):
 get_proxy.progress_dialog = _progress_fn_
 
 plugin = Plugin()
+
+proxy_settings={
+	'use_proxy': plugin.get_setting('f1n_use_proxy'),
+	'auto': plugin.get_setting('f1n_proxy_auto'),
+	'address': plugin.get_setting('f1n_proxy_address')
+}
+
 f1news = F1News(
 	res_path=os.path.join(plugin.path, 'resources'), 
-	use_proxy=plugin.get_setting('f1n_use_proxy'),
+	proxy_settings=proxy_settings,
 	storage=MemStorage('lazyf1'))
+
 rutracker = RuTracker(plugin)
 
 _addon_title_ = '[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]'
@@ -47,7 +57,11 @@ def root(params):
 
 	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
 
-	weekend = f1news.weekend_title()
+	try:
+		weekend = f1news.weekend_title()
+	except ProxyError:
+		xbmcgui.Dialog().ok("Ошибка", "Прокси сервер не доступен")
+		exit()
 
 	listing = [
 		{'label': u'Уикэнд: ' + weekend, 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': f1news.weekend_fanart()},
