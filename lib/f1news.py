@@ -2,6 +2,7 @@
 
 import requests
 import re
+import time
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
@@ -69,9 +70,10 @@ class F1News(object):
 
 		if self.proxy_settings['use_proxy']:
 			def get_new_proxy():
-				result = get_socks5(proxyurl="https://f1news.ru")
+				result = get_socks5(testurl="https://f1news.ru")
 				debug(f'New proxy {result}')
 				self.storage['proxy'] = proxy
+				time.sleep(1)
 				return result
 
 			if self.proxy_settings['auto']:
