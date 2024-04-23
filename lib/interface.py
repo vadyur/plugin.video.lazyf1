@@ -21,7 +21,7 @@ pDialog = None
 
 def _progress_fn_(address='', show=True):
 	global pDialog
-	
+
 	if (show):
 		if not pDialog:
 			pDialog = xbmcgui.DialogProgressBG()
@@ -42,7 +42,7 @@ proxy_settings={
 }
 
 f1news = F1News(
-	res_path=os.path.join(plugin.path, 'resources'), 
+	res_path=os.path.join(plugin.path, 'resources'),
 	proxy_settings=proxy_settings,
 	storage=MemStorage('lazyf1'))
 
@@ -89,9 +89,9 @@ def curr_season(params):
 	create_listing ([ item for item in f1news.calendar(current_year(), plugin.get_url) ])
 
 def item_by_year(year):
-	return {'label': str(year), 
-			'thumb': lazyf1images.seasons() +'old/bg.jpg', 
-			'fanart': lazyf1images.seasons() + str(year) + '/bg.jpg', 
+	return {'label': str(year),
+			'thumb': lazyf1images.seasons() +'old/bg.jpg',
+			'fanart': lazyf1images.seasons() + str(year) + '/bg.jpg',
 			'is_playable': False, 'url': plugin.get_url(action='show_season', year=str(year))}
 
 @plugin.action()
@@ -113,7 +113,7 @@ def gp_event(event, params):
 @plugin.action()
 def show_gp(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
-	create_listing ([ 
+	create_listing ([
 			gp_event(u'Квалификация', params),
 			gp_event(u'Гонка', params)
 	])
@@ -158,13 +158,13 @@ def search_item(item):
 
 	stream_info = { 'video': info }
 
-	infovideo = { 'genre': 'sport', 
+	infovideo = { 'genre': 'sport',
 				'title': title,
 				'studio': 'Formula One Management',
 				'plot': item['info'] }
 
 
-	return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info, 
+	return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info,
 			'info': {'video': infovideo }, 'thumb': os.path.join(plugin.path, 'resources', 'flags', 'resolution', flag + '.png'),
 			'url': plugin.get_url(action='list_torrent', **item)
 	}
@@ -177,10 +177,10 @@ def search(params):
 
 	from .f1base import gp_variants
 
-	items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ), 
-															gp_variants(decode_string( params['GP'] )), 
-															params['season'])] 
-	if len(items) > 0: 
+	items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ),
+															gp_variants(decode_string( params['GP'] )),
+															params['season'])]
+	if len(items) > 0:
 		xbmcplugin.setContent(int(sys.argv[1]), 'files')
 		create_listing (items)
 	else:
@@ -212,7 +212,7 @@ def list_torrent(params):
 		if page_url:
 			poster = rutracker.poster('http://{}/forum/{}'.format( rutracker.baseurl, page_url))
 			if poster:
-				return { 
+				return {
 					'poster': poster,
 					'thumb': poster,
 					'icon': poster
@@ -253,10 +253,10 @@ def channelName2uniqueId(channelname):
 		for channels in res:
 			#debug("TVHighlights %s - %s" % (channels['label'],channelname))
 			# priorize HD Channel
-			if channelname+" HD".lower() in channels['label'].lower(): 
+			if channelname+" HD".lower() in channels['label'].lower():
 				debug("TVHighlights found  HD priorized channel %s" % (channels['label']))
 				return channels['uniqueid']
-			if channelname.lower() in channels['label'].lower(): 
+			if channelname.lower() in channels['label'].lower():
 				debug("TVHighlights found  channel %s" % (channels['label']))
 				return channels['uniqueid']
 	return 0
@@ -324,7 +324,7 @@ def get_channels_playlist():
 
 		elif line.startswith('http:'):
 			if channel_in_list(channel['label']):
-				infovideo = {	'genre': 'sport', 
+				infovideo = {	'genre': 'sport',
 								'title': channel['label'],
 								'studio': 'Formula One Management'}
 
@@ -347,6 +347,8 @@ def get_channels():
 		return get_channels_pvr()
 	elif plugin.get_setting('tv_source') == 1:
 		return get_channels_playlist()
+	else:
+		return []
 
 @plugin.action()
 def live(params):
@@ -355,7 +357,7 @@ def live(params):
 	create_listing ([ item for item in get_channels() ])
 
 def jsonrpc(query):
-	ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))	
+	ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))
 
 @plugin.action()
 def tvchannel(params):
@@ -365,5 +367,5 @@ def tvchannel(params):
 			"method": "Player.Open",
 			"params": {"item": {"channelid": int(params['channelid'])}}
 			}
-	jsonrpc(query) 
+	jsonrpc(query)
 

@@ -3,6 +3,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 try:
 	from .f1base import current_year, local_time_from_msk
@@ -24,7 +25,7 @@ class F1News(object):
 
 	tracks_path = lazyf1images.tracks()
 
-	track_map = {"ru-f1news": 
+	track_map = {"ru-f1news":
 		{u"Альберт-парк":"melbourne",
 		u"Мельбурн":"melbourne",
 		u"Шанхай":"shanghai",
@@ -79,7 +80,7 @@ class F1News(object):
 					proxy = get_new_proxy()
 			else:
 				proxy = self.proxy_settings['address']
-			
+
 			debug('Use proxy')
 			debug(proxy)
 			proxies = { 'http': proxy, 'https': proxy }
@@ -99,7 +100,7 @@ class F1News(object):
 		else:
 			return requests.get(*args, **kwargs, headers=self.headers, verify=False)
 
-	def __init__(self, res_path, proxy_settings=None, storage={}):
+	def __init__(self, res_path, proxy_settings, storage={}):
 		self.res_path = res_path
 		self.proxy_settings = proxy_settings
 		self.storage = storage
@@ -115,7 +116,7 @@ class F1News(object):
 			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
 			return soup
-		
+
 	@property
 	def root_soap(self):
 		debug("@root_soap")
@@ -138,7 +139,7 @@ class F1News(object):
 		return self.champ_soaps.get(year)
 
 	@property
-	def curr_champ_soap(self, year):
+	def curr_champ_soap(self):
 		return self.champ_soap(current_year())
 
 	def weekend_title(self):
@@ -154,11 +155,12 @@ class F1News(object):
 		if self.root_soap:
 			try:
 				ul = self.root_soap.find('ul', class_='gp-widget-menu')
-				for a in ul.find_all('a'):
-					if 'preview.shtml' in a['href']:
-						return self.make_url(a['href'])
+				if ul and isinstance(ul, Tag):
+					for a in ul.find_all('a'):
+						if 'preview.shtml' in a['href']:
+							return self.make_url(a['href'])
 			except IndexError:
-				pass 
+				pass
 
 	@property
 	def preview_soap(self):
@@ -169,17 +171,17 @@ class F1News(object):
 				if resp.status_code == requests.codes.ok:
 					html = clean_html(resp.text)
 					self._preview_soap = BeautifulSoup(html, 'html.parser')
-				
+
 		return self._preview_soap
 
 	def weekend_fanart(self):
 		if self.preview_soap:
 			div = self.preview_soap.find('div', class_="post_head")
-			if div:
+			if div and isinstance(div, Tag):
 				div = div.find('div', class_="post_thumbnail")
 				if div:
 					img = div.find('img')
-					if img:
+					if img and isinstance(img, Tag):
 						return img['src']
 		return ''
 
@@ -208,12 +210,12 @@ class F1News(object):
 					except AttributeError:
 						continue
 
-					yield {	'label': title, 
+					yield {	'label': title,
 							'is_playable': False,
 							'event_time': event_time,
-							'url': get_url(action=action, 
-											event=title.strip('\n\r\t '), 
-											season=str(current_year()), 
+							'url': get_url(action=action,
+											event=title.strip('\n\r\t '),
+											season=str(current_year()),
 											GP=self.weekend_title().strip('\n\r\t '))}
 		for item in reversed(list(_weekend_schedule(True))):
 			yield item
@@ -238,10 +240,10 @@ class F1News(object):
 
 				ep_number += 1
 
-				item = {'is_playable': False}
+				item: dict = {'is_playable': False}
 				item['label'] = u'%s %s (%s)' % (TDs[0].get_text(), TDs[2].get_text(), TDs[3].get_text())
 				try:
-					infovideo = {'year': int(year), 'genre': 'sport', 'season': int(year), 
+					infovideo = {'year': int(year), 'genre': 'sport', 'season': int(year),
 								'episode': ep_number, 'tracknumber': ep_number, 'title': item['label'],
 								'studio': 'Formula One Management', 'tvshowtitle': 'Formula One Championship',
 								'premiered': '1950-05-13' }
@@ -263,7 +265,7 @@ class F1News(object):
 						from vdlib.util import urlparse
 						res = urlparse.urlparse(TDs[1].img['src'])
 						res = urlparse.ParseResult(res.scheme if res.scheme else 'https', res.netloc, res.path, res.params, res.query, res.fragment)
-						item['thumb'] = urlparse.urlunparse(res)  
+						item['thumb'] = urlparse.urlunparse(res)
 
 					item['info'] = {'video': infovideo }
 					debug(item)
