@@ -8,6 +8,7 @@ from .f1news import F1News
 from .rutracker import RuTracker
 from vdlib.util.log import debug
 from .f1base import current_year
+from vdlib.kodi.compat import translatePath
 
 import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
@@ -157,13 +158,13 @@ def nothing(params):
 	xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
 
 def torrents_path():
-	path = xbmc.translatePath('special://temp/lazyf1')
+	path = translatePath('special://temp/lazyf1')
 	return decode_string(path)
 
 @plugin.action()
 def list_torrent(params):
 
-	path = decode_string(xbmc.translatePath('special://temp/lazyf1.torrent'))
+	path = decode_string(translatePath('special://temp/lazyf1.torrent'))
 	rutracker.torrent_download(params['dl_link'], path)
 
 	plugin.torrents_path = torrents_path
