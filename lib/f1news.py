@@ -3,7 +3,12 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from .f1base import current_year, local_time_from_msk
+
+try:
+	from .f1base import current_year, local_time_from_msk
+except ImportError:
+	from f1base import current_year, local_time_from_msk
+
 from vdlib.util.log import debug
 from vdlib.scrappers.base import clean_html
 import lazyf1images
@@ -146,7 +151,10 @@ class F1News(object):
 							action = 'search'
 							event_time = None
 						else:
-							event_time = local_time_from_msk( div_time.get_text() )
+							try:
+								event_time = local_time_from_msk( div_time.get_text() )
+							except:
+								event_time = ''
 							title = colored(u'{} [{}]'.format(div_name.span.get_text(), event_time), 'FF808080')
 							action = 'nothing'
 					except AttributeError:
