@@ -4,6 +4,7 @@
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.lazyf1.images" optional="false"/>
     <import addon="script.module.beautifulsoup4" version="4.3.0"/>
+	<import addon="script.module.pysocks"/>
     <import addon="script.module.requests" optional="false"/>
     <import addon="script.module.simpleplugin3"/>
     <import addon="script.module.pyxbmct" version="1.1.4"/>

@@ -13,6 +13,8 @@ from vdlib.util.log import debug
 from vdlib.scrappers.base import clean_html
 import lazyf1images
 
+from vdlib.util.get_proxy import get_socks5
+
 class F1News(object):
 
 	headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.100 Safari/537.36',
@@ -61,22 +63,53 @@ class F1News(object):
 
 		return F1News.root_url + url
 
+	def http_get(self, *args, **kwargs):
+		proxies = None
 
-	def __init__(self, res_path, *args, **kwargs):
-		self.root_soap = self._get_root_soap()
+		if self.use_proxy:
+			def get_new_proxy():
+				result = get_socks5(proxyurl="https://f1news.ru")
+				debug(f'New proxy {result}')
+				self.storage['proxy'] = result
+				return result
+
+			proxy = self.storage.get('proxy')
+			if not proxy:
+				proxy = get_new_proxy()
+			
+			debug('Use proxy')
+			debug(proxy)
+			proxies = { 'http': proxy, 'https': proxy }
+
+			try:
+				resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies, timeout=3)
+			except Exception as detail:
+				debug('Proxy is dead')
+				proxy = get_new_proxy()
+				proxies = { 'http': proxy, 'https': proxy }
+				resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies)
+			return resp
+		else:
+			return requests.get(*args, **kwargs, headers=self.headers, verify=False)
+
+	def __init__(self, res_path, use_proxy=False, storage={}):
 		self.res_path = res_path
+		self.use_proxy = use_proxy
+		self.storage = storage
+
+		self.root_soap = self._get_root_soap()
 		self._preview_soap = None
-		return super(F1News, self).__init__(*args, **kwargs)
+		return super(F1News, self).__init__()
 
 	def _get_root_soap(self):
-		resp = requests.get(self.root_url, headers=self.headers, verify=False)
+		resp = self.http_get(self.root_url)
 		if resp.status_code == requests.codes.ok:
 			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
 			return soup
 
 	def _get_champ_soap(self, year):
-		resp = requests.get(self.make_url('/Championship/%s/') % str(year), headers=self.headers, verify=False)
+		resp = self.http_get(self.make_url('/Championship/%s/') % str(year))
 		if resp.status_code == requests.codes.ok:
 			html = clean_html(resp.text)
 			soup = BeautifulSoup(html, 'html.parser')
@@ -117,7 +150,7 @@ class F1News(object):
 		if not self._preview_soap:
 			url = self.weekend_url()
 			if url:
-				resp = requests.get(url, headers=self.headers, verify=False)
+				resp = self.http_get(url)
 				if resp.status_code == requests.codes.ok:
 					html = clean_html(resp.text)
 					self._preview_soap = BeautifulSoup(html, 'html.parser')

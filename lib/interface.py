@@ -1,9 +1,10 @@
 # coding: utf-8
 
-from simpleplugin import Plugin
+from simpleplugin import Plugin, MemStorage
 from vdlib.kodi.simpleplugin3_suport import create_listing
 from vdlib.util import decode_string
 
+import vdlib.util.get_proxy as get_proxy
 from .f1news import F1News
 from .rutracker import RuTracker
 from vdlib.util.log import debug
@@ -14,9 +15,27 @@ import lazyf1images
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin
 import sys, json, os
 
+pDialog = None
+
+def _progress_fn_(address='', show=True):
+	global pDialog
+	
+	if (show):
+		if not pDialog:
+			pDialog = xbmcgui.DialogProgressBG()
+			pDialog.create("Get proxy")
+		pDialog.update(message=f'Try {address}')
+	else:
+		pDialog.close()
+		pDialog = None
+
+get_proxy.progress_dialog = _progress_fn_
 
 plugin = Plugin()
-f1news = F1News(res_path=os.path.join(plugin.path, 'resources'))
+f1news = F1News(
+	res_path=os.path.join(plugin.path, 'resources'), 
+	use_proxy=plugin.get_setting('f1n_use_proxy'),
+	storage=MemStorage('lazyf1'))
 rutracker = RuTracker(plugin)
 
 _addon_title_ = '[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]'
