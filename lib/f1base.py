@@ -5,7 +5,7 @@ import time
 from datetime import datetime,tzinfo,timedelta
 
 def current_year():
-	return 2023
+	return 2024
 
 def gp_variants(GP):
 	# type: (str) -> str
@@ -32,7 +32,7 @@ def local_time_from_msk(msk_dt):
 		def dst(self, dt):
 			return timedelta(hours=1) if self.isdst else timedelta(0)
 		def tzname(self,dt):
-			return self.name	
+			return self.name
 
 	t = time.time()
 	lt = time.localtime(t)
@@ -44,7 +44,7 @@ def local_time_from_msk(msk_dt):
 		offset = time.mktime(lt) - time.mktime(gmt)
 		TZ_OFFSET = offset // 3600
 
-	MSK = Zone(3,False,'MSK')	
+	MSK = Zone(3,False,'MSK')
 	LOCAL = Zone(TZ_OFFSET, False, 'LOCAL')
 
 	format = '%H:%M'
