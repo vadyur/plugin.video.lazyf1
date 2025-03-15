@@ -60,12 +60,12 @@ class F1News(object):
 
 	@staticmethod
 	def make_url(url):
-		if url.startswith(F1News.root_url):
+		if url.startswith(F1News.root_url) or 'translate.goog' in url:
 			return url
 
 		return F1News.root_url + url
 
-	def http_get(self, *args, **kwargs):
+	def _http_get(self, *args, **kwargs):
 		proxies = None
 
 		if self.proxy_settings['use_proxy']:
@@ -87,20 +87,31 @@ class F1News(object):
 			debug(proxy)
 			proxies = { 'http': proxy, 'https': proxy }
 
-			try:
-				resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies, timeout=3)
-			except Exception as detail:
-				debug('Proxy is dead')
-				debug(detail)
-				if self.proxy_settings['auto']:
-					proxy = get_new_proxy()
-					proxies = { 'http': proxy, 'https': proxy }
-					resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies)
-				else:
-					raise detail
-			return resp
-		else:
-			return requests.get(*args, **kwargs, headers=self.headers, verify=False)
+		try:
+			resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies, timeout=1)
+		except Exception as detail:
+			debug('Proxy is dead')
+			debug(detail)
+			if self.proxy_settings['use_proxy'] and self.proxy_settings['auto']:
+				proxy = get_new_proxy()
+				proxies = { 'http': proxy, 'https': proxy }
+				resp = requests.get(*args, **kwargs, headers=self.headers, verify=False, proxies=proxies)
+			else:
+				raise detail
+		return resp
+
+	def _google_http_get(self, url, *args, **kwargs):
+		if not url.endswith('/'):
+			url = url + '/'
+		g_url = url.replace('https://www.f1news.ru', 'https://www-f1news-ru.translate.goog') + '?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp'
+		resp = requests.get(g_url, *args, **kwargs, headers=self.headers, verify=False)
+		return resp
+
+	def http_get(self, *args, **kwargs):
+		try:
+			return self._http_get(*args, **kwargs)
+		except Exception as detail:
+			return self._google_http_get(*args, **kwargs)
 
 	def __init__(self, res_path, proxy_settings, storage={}):
 		self.res_path = res_path

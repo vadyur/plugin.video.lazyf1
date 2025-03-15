@@ -1,11 +1,10 @@
 import re
 
-import calendar
 import time
 from datetime import datetime,tzinfo,timedelta
 
 def current_year():
-	return 2024
+	return datetime.now().year
 
 def gp_variants(GP):
 	# type: (str) -> str
