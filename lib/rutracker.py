@@ -44,6 +44,48 @@ class RuTracker(RuTrackerBase):
 		except (UnicodeDecodeError, UnicodeEncodeError):
 			return s
 
+	# Country name: nominative -> genitive for rutracker search
+	_GP_GENITIVE = {
+		u'Испания': u'Испании',
+		u'Бахрейн': u'Бахрейна',
+		u'Австралия': u'Австралии',
+		u'Китай': u'Китая',
+		u'Япония': u'Японии',
+		u'Канада': u'Канады',
+		u'Австрия': u'Австрии',
+		u'Великобритания': u'Великобритании',
+		u'Венгрия': u'Венгрии',
+		u'Бельгия': u'Бельгии',
+		u'Нидерланды': u'Нидерландов',
+		u'Италия': u'Италии',
+		u'Азербайджан': u'Азербайджана',
+		u'Сингапур': u'Сингапура',
+		u'Мексика': u'Мексики',
+		u'Бразилия': u'Бразилии',
+		u'Катар': u'Катара',
+		u'Саудовская Аравия': u'Саудовской Аравии',
+		u'Лас-Вегас': u'Лас-Вегаса',
+		u'Майами': u'Майами',
+		u'Монако': u'Монако',
+		u'США': u'США',
+		u'ОАЭ': u'ОАЭ',
+		u'Эмираты': u'Эмиратов',
+	}
+
+	def _to_genitive(self, gp):
+		"""Convert country GP name to genitive case for rutracker search.
+		e.g. 'Испания' -> 'Испании', 'Бахрейн' -> 'Бахрейна'
+		"""
+		if 'Гран-при ' in gp:
+			country = gp[len('Гран-при '):]
+			gen = self._GP_GENITIVE.get(country)
+			if gen:
+				return u'Гран-при ' + gen
+		gen = self._GP_GENITIVE.get(gp)
+		if gen:
+			return gen
+		return gp
+
 	def search(self, event, GP, year):
 		if not self.check_settings():
 			return
@@ -65,6 +107,8 @@ class RuTracker(RuTrackerBase):
 
 		if 'при' not in GP.lower() and 'prix' not in GP.lower():
 			GP = u'Гран-при ' + GP
+
+		GP = self._to_genitive(GP)
 
 		from vdlib.util.string import uni_type
 
