@@ -284,6 +284,6 @@ class F1News(object):
 					debug(item)
 				except:
 					pass
-				item['url'] = get_url(action='show_gp', season=str(year), GP=TDs[2].get_text().encode('utf-8'))
+				item['url'] = get_url(action='show_gp', season=str(year), GP=TDs[2].get_text())
 
 				yield item
