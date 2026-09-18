@@ -107,7 +107,7 @@ def show_season(params):
 	create_listing ([ item for item in f1news.calendar(params['year'], plugin.get_url) ])
 
 def gp_event(event, params):
-	url = plugin.get_url(action='search', event=event.encode('utf-8'), season=params['season'], GP=params['GP'])
+	url = plugin.get_url(action='search', event=event, season=params['season'], GP=params['GP'])
 	return {'label': event, 'url': url}
 
 @plugin.action()
