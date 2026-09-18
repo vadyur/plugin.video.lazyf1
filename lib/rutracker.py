@@ -63,6 +63,9 @@ class RuTracker(RuTrackerBase):
 
 		event = event.lower().replace(u'тренировка', u'практика')
 
+		if 'при' not in GP.lower() and 'prix' not in GP.lower():
+			GP = u'Гран-при ' + GP
+
 		from vdlib.util.string import uni_type
 
 		s = uni_type(year) + ' ' + event + ' ' + GP
