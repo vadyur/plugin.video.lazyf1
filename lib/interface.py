@@ -197,16 +197,6 @@ def torrents_path():
 @plugin.action()
 def list_torrent(params):
 
-	path = decode_string(translatePath('special://temp/lazyf1.torrent'))
-	rutracker.torrent_download(params['dl_link'], path)
-
-	plugin.torrents_path = torrents_path
-
-	from vdlib.kodi.player import OurDialogProgress
-
-	info_dialog = OurDialogProgress()
-	info_dialog.create(_addon_title_)
-
 	def get_art():
 		page_url = params.get('page_url')
 		if page_url:
@@ -218,17 +208,22 @@ def list_torrent(params):
 					'icon': poster
 				}
 
-	from vdlib.kodi.player import play_torrent
-	play_torrent(path, plugin, info_dialog, _addon_title_, art=get_art)
+	page_url = params.get('page_url')
+	if not page_url:
+		return
 
-	info_dialog.update(0, '', '')
-	info_dialog.close()
+	magnet = rutracker.magnet_link('http://{}/forum/{}'.format(rutracker.baseurl, page_url))
+	if not magnet:
+		return
+
+	from torrserve_stream.player import Player
+	Player(uri=magnet, art=get_art)
 
 
 @plugin.action()
 def play(params):
 	li = xbmcgui.ListItem(path=params.url)
-	xbmcplugin.setResolvedUrl(plugin.handle, True, li)
+	xbmcplugin.setResolvedUrl(plugin.handle, True, li)	# type: ignore
 
 def channelName2uniqueId(channelname):
 	query = {
@@ -267,7 +262,7 @@ def channel_in_list(ch):
 		s = s.lower()
 		return s
 
-	for posible in plugin.get_setting('tv_channels').split('|'):
+	for posible in plugin.get_setting('tv_channels').split('|'):	# type: ignore
 		if lower(posible) == lower(ch):
 			return True
 

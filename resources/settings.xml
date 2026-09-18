@@ -16,6 +16,11 @@
     <setting label="Учётные данные сайта rutracker.org (необходима регистрация на сайте)" type="lsep"/>
     <setting label="Login" type="text"   id="rt_username" default=""/>
     <setting label="Password" type="text"   id="rt_password" option="hidden"  default=""/>
+    <setting type="sep"/>
+    <setting label="FlareSolverr" type="lsep"/>
+    <setting id="rt_flaresolverr_url" type="text" label="FlareSolverr URL" default=""/>
+    <setting id="rt_flaresolverr_timeout" type="number" label="FlareSolverr timeout (sec)" default="120" enable="!eq(-1,)"/>
+    <setting id="rt_flaresolverr_direct_timeout" type="number" label="Direct timeout (sec)" default="45" enable="!eq(-2,)"/>
   </category>
 
   <category label="F1News">
@@ -25,15 +30,7 @@
   </category>
 
   <category label="P2P Сеть">
-		<setting label="Торрент проигрыватель" id="torrent_player" type="select" values="torrent2http|TorrServer" default="TorrServer" /> <!---->
-		<setting label="Путь для сохранения видео файлов"	type="folder" id="storage_path"	default="" visible="eq(-1,torrent2http)" />
-    <setting id="upload_limit"      type="number"   label="Ограничить скорость раздачи МБит/сек (0 - неограничено)" default="0"       visible="eq(-2,torrent2http)"/>
-    <setting id="download_limit"    type="number"   label="Ограничить скорость закачки МБит/сек (0 - неограничено)" default="0"       visible="eq(-3,torrent2http)"/>
-    <setting id="encryption"        type="bool"     label="Шифрование" default="true"    visible="eq(-4,torrent2http)"/>
-    <setting id="connections_limit" type="number"   label="Макс. соединений (0 - безлимит)" default="200"     visible="eq(-5,torrent2http)"/>
-    <setting id="listen_port"       type="number"   label="Порт для входящих соединений" default="6881"    visible="eq(-6,torrent2http)"/>
-    <setting id="use_random_port"   type="bool"     label="Использовать случайные порты" default="false"   visible="eq(-7,torrent2http)"/>
-    <setting id="pre_buffer_bytes"  type="slider"   label="Загружаемый объем файла до начала просмотра, Мб" default="25"      visible="eq(-8,torrent2http)"  range="5,5,50" option="int"/>
+		<setting type="action" label="TorrServer" action="Addon.OpenSettings(script.module.torrserver)"/>
 	</category>
 
   <category label="ТВ">

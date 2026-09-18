@@ -107,6 +107,14 @@ class RuTracker(RuTrackerBase):
 				result = var.get('title')
 				return result
 
+	def magnet_link(self, page_url):
+		req = self.get_request(page_url)
+		if req.ok:
+			bs = BeautifulSoup(clean_html(req.text), 'html.parser')
+			for a in bs.find_all('a', href=re.compile(r'^magnet:')):
+				return a['href']
+		return None
+
 	@staticmethod
 	def parts(title):
 		pts = title.split(' / ')
