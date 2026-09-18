@@ -32,6 +32,18 @@ class RuTracker(RuTrackerBase):
 				return part
 		return None
 
+	def _fix_url_encoding(self, s):
+		"""Fix Kodi 21 cp1251 garbling of Cyrillic in plugin URLs.
+		Kodi decodes %D0%D0%D8... as cp1251, producing garbled Unicode.
+		Re-encode cp1251 -> bytes -> decode UTF-8 to recover original text.
+		"""
+		if not isinstance(s, str):
+			return s
+		try:
+			return s.encode('cp1251').decode('utf-8')
+		except (UnicodeDecodeError, UnicodeEncodeError):
+			return s
+
 	def search(self, event, GP, year):
 		if not self.check_settings():
 			return
@@ -45,6 +57,9 @@ class RuTracker(RuTrackerBase):
 
 		url = 'https://%s/forum/viewforum.php?f=' % self.baseurl + RuTracker.part_for_year(year)
 		headers = {'Referer': url}
+
+		event = self._fix_url_encoding(event)
+		GP = self._fix_url_encoding(GP)
 
 		event = event.lower().replace(u'тренировка', u'практика')
 
