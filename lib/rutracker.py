@@ -51,7 +51,6 @@ class RuTracker(RuTrackerBase):
 		from vdlib.util.string import uni_type
 
 		s = uni_type(year) + ' ' + event + ' ' + GP
-		s = s.encode('cp1251')
 
 		data = { 'fsf': '255', 'nm': s }
 
