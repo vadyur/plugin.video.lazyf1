@@ -6,6 +6,7 @@ from vdlib.util import decode_string
 
 import vdlib.util.get_proxy as get_proxy
 from .f1news import F1News
+from .championat import Championat
 from .rutracker import RuTracker
 from vdlib.util.log import debug
 from .f1base import current_year
@@ -41,10 +42,16 @@ proxy_settings={
 	'address': plugin.get_setting('f1n_proxy_address')
 }
 
-f1news = F1News(
-	res_path=os.path.join(plugin.path, 'resources'),
-	proxy_settings=proxy_settings,
-	storage=MemStorage('lazyf1'))
+def create_info_provider():
+	res_path = os.path.join(plugin.path, 'resources')
+	if plugin.get_setting('info_provider') == 1:
+		return Championat(res_path=res_path, storage=MemStorage('lazyf1'))
+	return F1News(
+		res_path=res_path,
+		proxy_settings=proxy_settings,
+		storage=MemStorage('lazyf1'))
+
+info_provider = create_info_provider()
 
 rutracker = RuTracker(plugin)
 
@@ -58,13 +65,13 @@ def root(params):
 	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
 
 	try:
-		weekend = f1news.weekend_title()
+		weekend = info_provider.weekend_title()
 	except ProxyError:
 		xbmcgui.Dialog().ok("Ошибка", "Прокси сервер не доступен")
 		exit()
 
 	listing = [
-		{'label': u'Уикэнд: ' + weekend, 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': f1news.weekend_fanart()},
+		{'label': u'Уикэнд: ' + weekend, 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': info_provider.weekend_fanart()},
 		{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag, 'fanart': lazyf1images.seasons() + str(current_year()) + '/bg.jpg'},
 		{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'old/bg.jpg'},
 		{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag, 'fanart': os.path.join(plugin.path, 'resources', 'live.jpg')}
@@ -79,14 +86,14 @@ def weekend_item(item):
 def weekend(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	create_listing([ weekend_item(item) for item in f1news.weekend_schedule(plugin.get_url) ])
+	create_listing([ weekend_item(item) for item in info_provider.weekend_schedule(plugin.get_url) ])
 
 
 @plugin.action()
 def curr_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	create_listing ([ item for item in f1news.calendar(current_year(), plugin.get_url) ])
+	create_listing ([ item for item in info_provider.calendar(current_year(), plugin.get_url) ])
 
 def item_by_year(year):
 	return {'label': str(year),
@@ -98,13 +105,13 @@ def item_by_year(year):
 def prev_seasons(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 
-	create_listing ([item_by_year(item) for item in range(current_year()-1, 1999-1, -1)])
+	create_listing ([item_by_year(item) for item in range(current_year()-1, getattr(info_provider, 'first_season', 1999)-1, -1)])
 
 @plugin.action()
 def show_season(params):
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	create_listing ([ item for item in f1news.calendar(params['year'], plugin.get_url) ])
+	create_listing ([ item for item in info_provider.calendar(params['year'], plugin.get_url) ])
 
 def gp_event(event, params):
 	url = plugin.get_url(action='search', event=event, season=params['season'], GP=params['GP'])
