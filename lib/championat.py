@@ -68,7 +68,7 @@ class Championat(object):
         u"Мехико": "mexico",
         u"Сан-Паулу": "interlagos",
         u"Абу-Даби": "yasmarina",
-        # схемы этих трасс взяты с f1-ua.com, фоновых bg.jpg для них нет
+        # схемы этих трасс взяты с f1-ua.com
         u"Валенсия": "valencia",
         u"Дели": "buddh",
         u"Джидда": "jeddah",
@@ -89,7 +89,11 @@ class Championat(object):
         "austin", "baku", "barcelona", "hungaroring", "interlagos",
         "melbourne", "mexico", "monaco", "montreal", "monza", "nuerburgring",
         "redbullring", "sakhir", "sepang", "shanghai", "silverstone", "singapore",
-        "sochi", "spa", "suzuka", "yasmarina"
+        "sochi", "spa", "suzuka", "yasmarina",
+        # фоны с Wikimedia Commons, см. script.module.lazyf1.images/resources/tracks/CREDITS.txt
+        "buddh", "hockenheim", "istanbul", "jeddah", "lasvegas", "lusail", "miami",
+        "mugello", "portimao", "valencia", "yeongam", "zandvoort", "imola", "paulricard",
+        "madring"
     }
 
     def __init__(self, res_path, storage={}):
