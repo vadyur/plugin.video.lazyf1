@@ -21,35 +21,35 @@ from requests.exceptions import ProxyError
 pDialog = None
 
 def _progress_fn_(address='', show=True):
-	global pDialog
+    global pDialog
 
-	if (show):
-		if not pDialog:
-			pDialog = xbmcgui.DialogProgressBG()
-			pDialog.create("Get proxy")
-		pDialog.update(message=f'Try {address}')
-	else:
-		pDialog.close()
-		pDialog = None
+    if (show):
+        if not pDialog:
+            pDialog = xbmcgui.DialogProgressBG()
+            pDialog.create("Get proxy")
+        pDialog.update(message=f'Try {address}')
+    else:
+        pDialog.close()
+        pDialog = None
 
 get_proxy.progress_dialog = _progress_fn_
 
 plugin = Plugin()
 
 proxy_settings={
-	'use_proxy': plugin.get_setting('f1n_use_proxy'),
-	'auto': plugin.get_setting('f1n_proxy_auto'),
-	'address': plugin.get_setting('f1n_proxy_address')
+    'use_proxy': plugin.get_setting('f1n_use_proxy'),
+    'auto': plugin.get_setting('f1n_proxy_auto'),
+    'address': plugin.get_setting('f1n_proxy_address')
 }
 
 def create_info_provider():
-	res_path = os.path.join(plugin.path, 'resources')
-	if plugin.get_setting('info_provider') == 1:
-		return Championat(res_path=res_path, storage=MemStorage('lazyf1'))
-	return F1News(
-		res_path=res_path,
-		proxy_settings=proxy_settings,
-		storage=MemStorage('lazyf1'))
+    res_path = os.path.join(plugin.path, 'resources')
+    if plugin.get_setting('info_provider') == 1:
+        return Championat(res_path=res_path, storage=MemStorage('lazyf1'))
+    return F1News(
+        res_path=res_path,
+        proxy_settings=proxy_settings,
+        storage=MemStorage('lazyf1'))
 
 info_provider = create_info_provider()
 
@@ -60,314 +60,314 @@ _addon = xbmcaddon.Addon()
 
 @plugin.action()
 def root(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+    xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
+    flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
 
-	try:
-		weekend = info_provider.weekend_title()
-	except ProxyError:
-		xbmcgui.Dialog().ok("Ошибка", "Прокси сервер не доступен")
-		exit()
+    try:
+        weekend = info_provider.weekend_title()
+    except ProxyError:
+        xbmcgui.Dialog().ok("Ошибка", "Прокси сервер не доступен")
+        exit()
 
-	listing = [
-		{'label': u'Уикэнд: ' + weekend, 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': info_provider.weekend_fanart()},
-		{'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag, 'fanart': lazyf1images.seasons() + str(current_year()) + '/bg.jpg'},
-		{'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'old/bg.jpg'},
-		{'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag, 'fanart': os.path.join(plugin.path, 'resources', 'live.jpg')}
-	]
-	create_listing( listing if weekend else listing[1:] )
+    listing = [
+        {'label': u'Уикэнд: ' + weekend, 'url': plugin.get_url(action='weekend'), 'thumb': flag, 'fanart': info_provider.weekend_fanart()},
+        {'label': u'Текущий сезон', 'url': plugin.get_url(action='curr_season'), 'thumb': flag, 'fanart': lazyf1images.seasons() + str(current_year()) + '/bg.jpg'},
+        {'label': u'Предыдущие сезоны', 'url': plugin.get_url(action='prev_seasons'), 'thumb': flag, 'fanart': lazyf1images.seasons() +'old/bg.jpg'},
+        {'label': u'Прямая трансляция', 'url': plugin.get_url(action='live'), 'thumb': flag, 'fanart': os.path.join(plugin.path, 'resources', 'live.jpg')}
+    ]
+    create_listing( listing if weekend else listing[1:] )
 
 def weekend_item(item):
-	flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
-	return dict({'thumb': flag}, **item)
+    flag = os.path.join(plugin.path, 'resources', 'flags', 'gp.png')
+    return dict({'thumb': flag}, **item)
 
 @plugin.action()
 def weekend(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+    xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	create_listing([ weekend_item(item) for item in info_provider.weekend_schedule(plugin.get_url) ])
+    create_listing([ weekend_item(item) for item in info_provider.weekend_schedule(plugin.get_url) ])
 
 
 @plugin.action()
 def curr_season(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+    xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	create_listing ([ item for item in info_provider.calendar(current_year(), plugin.get_url) ])
+    create_listing ([ item for item in info_provider.calendar(current_year(), plugin.get_url) ])
 
 def item_by_year(year):
-	return {'label': str(year),
-			'thumb': lazyf1images.seasons() +'old/bg.jpg',
-			'fanart': lazyf1images.seasons() + str(year) + '/bg.jpg',
-			'is_playable': False, 'url': plugin.get_url(action='show_season', year=str(year))}
+    return {'label': str(year),
+            'thumb': lazyf1images.seasons() +'old/bg.jpg',
+            'fanart': lazyf1images.seasons() + str(year) + '/bg.jpg',
+            'is_playable': False, 'url': plugin.get_url(action='show_season', year=str(year))}
 
 @plugin.action()
 def prev_seasons(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
+    xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
 
-	create_listing ([item_by_year(item) for item in range(current_year()-1, getattr(info_provider, 'first_season', 1999)-1, -1)])
+    create_listing ([item_by_year(item) for item in range(current_year()-1, getattr(info_provider, 'first_season', 1999)-1, -1)])
 
 @plugin.action()
 def show_season(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+    xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-	create_listing ([ item for item in info_provider.calendar(params['year'], plugin.get_url) ])
+    create_listing ([ item for item in info_provider.calendar(params['year'], plugin.get_url) ])
 
 def gp_event(event, params):
-	url = plugin.get_url(action='search', event=event, season=params['season'], GP=params['GP'])
-	return {'label': event, 'url': url}
+    url = plugin.get_url(action='search', event=event, season=params['season'], GP=params['GP'])
+    return {'label': event, 'url': url}
 
 @plugin.action()
 def show_gp(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'files')
-	create_listing ([
-			gp_event(u'Квалификация', params),
-			gp_event(u'Гонка', params)
-	])
+    xbmcplugin.setContent(int(sys.argv[1]), 'files')
+    create_listing ([
+            gp_event(u'Квалификация', params),
+            gp_event(u'Гонка', params)
+    ])
 
 def search_item(item):
-	title = "[%s/%s] %s" % (item['seeds'], item['leechers'], RuTracker.clean_title(item['title']))
-	#title = title + '\n' + item['info']
-	w = 0
-	h = 0
-	flag = 'SD'
+    title = "[%s/%s] %s" % (item['seeds'], item['leechers'], RuTracker.clean_title(item['title']))
+    #title = title + '\n' + item['info']
+    w = 0
+    h = 0
+    flag = 'SD'
 
-	if 'HDTV' in item['info'] or 'WEB-DL HD' in item['info']:
-		flag = 'hd'
+    if 'HDTV' in item['info'] or 'WEB-DL HD' in item['info']:
+        flag = 'hd'
 
-	if '720p' in item['info']:
-		w = 1280
-		h = 720
-		title += ' / 720p'
-		flag = '720'
-	elif '1080' in item['info']:
-		w = 1920
-		h = 1080
-		title += ' / 1080'
-		flag = '1080'
-	elif '400p' in item['info']:
-		w = 720
-		h = 400
-		title += ' / 400'
-		flag = 'sd'
-
-
-	lang = ''
-	part = item['info'].split(',')[-1].lower()
-	if 'en' in part or 'ru' in part or 'int' in part:
-		title += ' [' + part + ']'
-
-	info = {}
-	if w:
-		info['width'] = w
-	if h:
-		info['height'] = h
-
-	stream_info = { 'video': info }
-
-	infovideo = { 'genre': 'sport',
-				'title': title,
-				'studio': 'Formula One Management',
-				'plot': item['info'] }
+    if '720p' in item['info']:
+        w = 1280
+        h = 720
+        title += ' / 720p'
+        flag = '720'
+    elif '1080' in item['info']:
+        w = 1920
+        h = 1080
+        title += ' / 1080'
+        flag = '1080'
+    elif '400p' in item['info']:
+        w = 720
+        h = 400
+        title += ' / 400'
+        flag = 'sd'
 
 
-	return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info,
-			'info': {'video': infovideo }, 'thumb': os.path.join(plugin.path, 'resources', 'flags', 'resolution', flag + '.png'),
-			'url': plugin.get_url(action='list_torrent', **item)
-	}
+    lang = ''
+    part = item['info'].split(',')[-1].lower()
+    if 'en' in part or 'ru' in part or 'int' in part:
+        title += ' [' + part + ']'
+
+    info = {}
+    if w:
+        info['width'] = w
+    if h:
+        info['height'] = h
+
+    stream_info = { 'video': info }
+
+    infovideo = { 'genre': 'sport',
+                'title': title,
+                'studio': 'Formula One Management',
+                'plot': item['info'] }
+
+
+    return {'label': title, 'label2': item['info'], 'is_playable': True, 'stream_info': stream_info,
+            'info': {'video': infovideo }, 'thumb': os.path.join(plugin.path, 'resources', 'flags', 'resolution', flag + '.png'),
+            'url': plugin.get_url(action='list_torrent', **item)
+    }
 
 @plugin.action()
 def search(params):
-	if not rutracker.check_settings():
-		xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
-		_addon.openSettings()
+    if not rutracker.check_settings():
+        xbmcgui.Dialog().notification(_addon_title_, u'Введите логин/пароль для RuTracker')
+        _addon.openSettings()
 
-	from .f1base import gp_variants
+    from .f1base import gp_variants
 
-	items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ),
-															gp_variants(decode_string( params['GP'] )),
-															params['season'])]
-	if len(items) > 0:
-		xbmcplugin.setContent(int(sys.argv[1]), 'files')
-		create_listing (items)
-	else:
-		xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
+    items = [search_item(item) for item in rutracker.search(decode_string( params['event'] ),
+                                                            gp_variants(decode_string( params['GP'] )),
+                                                            params['season'])]
+    if len(items) > 0:
+        xbmcplugin.setContent(int(sys.argv[1]), 'files')
+        create_listing (items)
+    else:
+        xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
 
 @plugin.action()
 def nothing(params):
-	xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
+    xbmcgui.Dialog().notification(_addon_title_, u'Пока ничего нет')
 
 def torrents_path():
-	path = translatePath('special://temp/lazyf1')
-	return decode_string(path)
+    path = translatePath('special://temp/lazyf1')
+    return decode_string(path)
 
 @plugin.action()
 def list_torrent(params):
 
-	def get_art():
-		page_url = params.get('page_url')
-		if page_url:
-			poster = rutracker.poster('http://{}/forum/{}'.format( rutracker.baseurl, page_url))
-			if poster:
-				return {
-					'poster': poster,
-					'thumb': poster,
-					'icon': poster
-				}
+    def get_art():
+        page_url = params.get('page_url')
+        if page_url:
+            poster = rutracker.poster('http://{}/forum/{}'.format( rutracker.baseurl, page_url))
+            if poster:
+                return {
+                    'poster': poster,
+                    'thumb': poster,
+                    'icon': poster
+                }
 
-	page_url = params.get('page_url')
-	if not page_url:
-		return
+    page_url = params.get('page_url')
+    if not page_url:
+        return
 
-	magnet = rutracker.magnet_link('http://{}/forum/{}'.format(rutracker.baseurl, page_url))
-	if not magnet:
-		return
+    magnet = rutracker.magnet_link('http://{}/forum/{}'.format(rutracker.baseurl, page_url))
+    if not magnet:
+        return
 
-	from torrserve_stream.player import Player
-	Player(uri=magnet, art=get_art)
+    from torrserve_stream.player import Player
+    Player(uri=magnet, art=get_art)
 
 
 @plugin.action()
 def play(params):
-	li = xbmcgui.ListItem(path=params.url)
-	xbmcplugin.setResolvedUrl(plugin.handle, True, li)	# type: ignore
+    li = xbmcgui.ListItem(path=params.url)
+    xbmcplugin.setResolvedUrl(plugin.handle, True, li)  # type: ignore
 
 def channelName2uniqueId(channelname):
-	query = {
-			"jsonrpc": "2.0",
-			"method": "PVR.GetChannels",
-			"params": {"channelgroupid": "alltv", "properties" :["channelnumber"]},
-			"id": 1
-			}
-	res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
-	debug(res)
-	"""
-	# translate via json if necessary
-	trans = json.loads(str(ChannelTranslate))
-	for tr in trans:
-		if channelname == tr['name']:
-			debug("Translating %s to %s" % (channelname,tr['pvrname']))
-			channelname = tr['pvrname']
-	"""
+    query = {
+            "jsonrpc": "2.0",
+            "method": "PVR.GetChannels",
+            "params": {"channelgroupid": "alltv", "properties" :["channelnumber"]},
+            "id": 1
+            }
+    res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+    debug(res)
+    """
+    # translate via json if necessary
+    trans = json.loads(str(ChannelTranslate))
+    for tr in trans:
+        if channelname == tr['name']:
+            debug("Translating %s to %s" % (channelname,tr['pvrname']))
+            channelname = tr['pvrname']
+    """
 
-	if 'result' in res and 'channels' in res['result']:
-		res = res['result'].get('channels')
-		for channels in res:
-			#debug("TVHighlights %s - %s" % (channels['label'],channelname))
-			# priorize HD Channel
-			if channelname+" HD".lower() in channels['label'].lower():
-				debug("TVHighlights found  HD priorized channel %s" % (channels['label']))
-				return channels['uniqueid']
-			if channelname.lower() in channels['label'].lower():
-				debug("TVHighlights found  channel %s" % (channels['label']))
-				return channels['uniqueid']
-	return 0
+    if 'result' in res and 'channels' in res['result']:
+        res = res['result'].get('channels')
+        for channels in res:
+            #debug("TVHighlights %s - %s" % (channels['label'],channelname))
+            # priorize HD Channel
+            if channelname+" HD".lower() in channels['label'].lower():
+                debug("TVHighlights found  HD priorized channel %s" % (channels['label']))
+                return channels['uniqueid']
+            if channelname.lower() in channels['label'].lower():
+                debug("TVHighlights found  channel %s" % (channels['label']))
+                return channels['uniqueid']
+    return 0
 
 def channel_in_list(ch):
-	def lower(s):
-		s = decode_string(s)
-		s = s.lower()
-		return s
+    def lower(s):
+        s = decode_string(s)
+        s = s.lower()
+        return s
 
-	for posible in plugin.get_setting('tv_channels').split('|'):	# type: ignore
-		if lower(posible) == lower(ch):
-			return True
+    for posible in plugin.get_setting('tv_channels').split('|'):  # type: ignore
+        if lower(posible) == lower(ch):
+            return True
 
-	return False
+    return False
 
 def get_channels_pvr():
-	ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups", "params":{"channeltype":"tv"} }'))
-	debug(ret)
-	try:
-		channelgroups = ret['result']['channelgroups']
-	except KeyError:
-		return
+    ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups", "params":{"channeltype":"tv"} }'))
+    debug(ret)
+    try:
+        channelgroups = ret['result']['channelgroups']
+    except KeyError:
+        return
 
-	for channelgroup in channelgroups:
-		#Get Channels
-		ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannels", "params":{"channelgroupid" : ' + str(channelgroup['channelgroupid']) + '} }'))
-		try:
-			channels = ret['result']['channels']
-		except KeyError:
-			return
-		for channel in channels:
-			if channel_in_list(channel['label']):
-				channel['url'] = plugin.get_url(action='tvchannel', **channel)
-				channel['is_folder'] = False
-				yield channel
+    for channelgroup in channelgroups:
+        #Get Channels
+        ret = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannels", "params":{"channelgroupid" : ' + str(channelgroup['channelgroupid']) + '} }'))
+        try:
+            channels = ret['result']['channels']
+        except KeyError:
+            return
+        for channel in channels:
+            if channel_in_list(channel['label']):
+                channel['url'] = plugin.get_url(action='tvchannel', **channel)
+                channel['is_folder'] = False
+                yield channel
 
 def get_channels_playlist():
-	def m3u():
-		if plugin.get_setting('tv_playlist_source') == 0:
-			from vdlib.util import filesystem
-			with filesystem.fopen(plugin.get_setting('tv_playlist_source_local'), 'r') as f:
-				return f.readlines()
-		if plugin.get_setting('tv_playlist_source') == 1:
-			xbmc.log('plugin.tv_playlist_source == 1')
-			from vdlib.util import urlopen
-			return urlopen(plugin.get_setting('tv_playlist_source_remote')).readlines()
-		return []
+    def m3u():
+        if plugin.get_setting('tv_playlist_source') == 0:
+            from vdlib.util import filesystem
+            with filesystem.fopen(plugin.get_setting('tv_playlist_source_local'), 'r') as f:
+                return f.readlines()
+        if plugin.get_setting('tv_playlist_source') == 1:
+            xbmc.log('plugin.tv_playlist_source == 1')
+            from vdlib.util import urlopen
+            return urlopen(plugin.get_setting('tv_playlist_source_remote')).readlines()
+        return []
 
-	def parse_logo(line, channel):
-		import re
-		m = re.search(r'tvg-logo="(.+?)"', line)
-		if m:
-			channel['thumb'] = m.group(1)
+    def parse_logo(line, channel):
+        import re
+        m = re.search(r'tvg-logo="(.+?)"', line)
+        if m:
+            channel['thumb'] = m.group(1)
 
-	channel = {}
-	for line in m3u():
-		#xbmc.log(line)
-		line = decode_string(line)
-		if line.startswith('#EXTINF'):
-			channel = {}
-			channel['label'] = line.split(',')[-1].strip('\r\n ')
-			#xbmc.log('channel["label"] = "{}"'.format(channel['label']))
-			parse_logo(line, channel)
+    channel = {}
+    for line in m3u():
+        #xbmc.log(line)
+        line = decode_string(line)
+        if line.startswith('#EXTINF'):
+            channel = {}
+            channel['label'] = line.split(',')[-1].strip('\r\n ')
+            #xbmc.log('channel["label"] = "{}"'.format(channel['label']))
+            parse_logo(line, channel)
 
-		elif line.startswith('http:'):
-			if channel_in_list(channel['label']):
-				infovideo = {	'genre': 'sport',
-								'title': channel['label'],
-								'studio': 'Formula One Management'}
+        elif line.startswith('http:'):
+            if channel_in_list(channel['label']):
+                infovideo = { 'genre': 'sport',
+                                'title': channel['label'],
+                                'studio': 'Formula One Management'}
 
-				channel['url'] = line.strip('\r\n')
-				channel['is_folder'] = False
-				channel['is_playable'] = True
-				channel['info'] = {'video': infovideo }
+                channel['url'] = line.strip('\r\n')
+                channel['is_folder'] = False
+                channel['is_playable'] = True
+                channel['info'] = {'video': infovideo }
 
-				yield channel
+                yield channel
 
 
 def get_channels():
-	"""
-	import ptvsd
-	ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6666))
-	ptvsd.wait_for_attach()
-	"""
+    """
+    import ptvsd
+    ptvsd.enable_attach(secret=None, address = ('0.0.0.0', 6666))
+    ptvsd.wait_for_attach()
+    """
 
-	if plugin.get_setting('tv_source') == 0:
-		return get_channels_pvr()
-	elif plugin.get_setting('tv_source') == 1:
-		return get_channels_playlist()
-	else:
-		return []
+    if plugin.get_setting('tv_source') == 0:
+        return get_channels_pvr()
+    elif plugin.get_setting('tv_source') == 1:
+        return get_channels_playlist()
+    else:
+        return []
 
 @plugin.action()
 def live(params):
-	xbmcplugin.setContent(int(sys.argv[1]), 'files')
+    xbmcplugin.setContent(int(sys.argv[1]), 'files')
 
-	create_listing ([ item for item in get_channels() ])
+    create_listing ([ item for item in get_channels() ])
 
 def jsonrpc(query):
-	ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))
+    ret = json.loads(xbmc.executeJSONRPC(json.dumps(query)))
 
 @plugin.action()
 def tvchannel(params):
-	query = {
-			"jsonrpc": "2.0",
-			"id": 1,
-			"method": "Player.Open",
-			"params": {"item": {"channelid": int(params['channelid'])}}
-			}
-	jsonrpc(query)
+    query = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "Player.Open",
+            "params": {"item": {"channelid": int(params['channelid'])}}
+            }
+    jsonrpc(query)
 
