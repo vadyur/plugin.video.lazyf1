@@ -2,7 +2,7 @@
 <addon id="plugin.video.lazyf1" version="2026.1+matrix" name="[COLOR=FFFFFFFF]Lazy[/COLOR] [COLOR=FFFF0000]F1[/COLOR]" provider-name="-=Vd=-">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
-    <import addon="script.module.lazyf1.images" version="1.0.5" optional="false"/>
+    <import addon="script.module.lazyf1.images" optional="false"/>
     <import addon="script.module.beautifulsoup4" version="4.3.0"/>
 	<import addon="script.module.pysocks"/>
     <import addon="script.module.requests" optional="false"/>
