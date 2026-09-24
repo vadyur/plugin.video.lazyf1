@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import requests
 import re
 from datetime import datetime, timedelta, timezone
@@ -104,16 +105,30 @@ class Championat(object):
             return url
         return Championat.root_url + url
 
+    def _get(self, url, **kwargs):
+        # сайт обычно отвечает за 1-2 сек, но изредка подвисает - одна повторная попытка
+        for attempt in (1, 2):
+            try:
+                return requests.get(url, headers=self.headers, cookies=self.cookies, verify=False, timeout=(5, 15), **kwargs)
+            except requests.exceptions.RequestException as e:
+                debug('championat: attempt {} failed: {}'.format(attempt, e))
+                if attempt == 2:
+                    raise
+
     def http_get(self, url):
         url = self.make_url(url)
-        resp = requests.get(url, headers=self.headers, cookies=self.cookies, verify=False, timeout=10)
+        resp = self._get(url)
         if 'SberID' in resp.text[:2000]:
             debug('championat: SberID stub, retry with utm_auth=false')
-            resp = requests.get(url, params={'utm_auth': 'false'}, headers=self.headers, cookies=self.cookies, verify=False, timeout=10)
+            resp = self._get(url, params={'utm_auth': 'false'})
         return resp
 
     def _soup(self, url):
-        resp = self.http_get(url)
+        try:
+            resp = self.http_get(url)
+        except requests.exceptions.RequestException as e:
+            debug('championat: {} unavailable: {}'.format(url, e))
+            return None
         if resp.status_code == requests.codes.ok:
             return BeautifulSoup(clean_html(resp.text), 'html.parser')
 
@@ -257,10 +272,11 @@ class Championat(object):
                 if key in self.tracks_with_fanart:
                     item['fanart'] = item['art']['fanart'] = self.tracks_path + key + '/bg.jpg'
                 try:
-                    from vdlib.util import filesystem
-                    path = filesystem.join(self.res_path, 'tracks', key, 'info.txt')
-                    if filesystem.exists(path):
-                        with filesystem.fopen(path, 'rb') as info:
+                    # res_path - обычный путь на диске; vdlib.filesystem.fopen под Kodi
+                    # читает через xbmcvfs и отдаёт str вместо bytes
+                    path = os.path.join(self.res_path, 'tracks', key, 'info.txt')
+                    if os.path.exists(path):
+                        with open(path, 'rb') as info:
                             data = info.read()
                         try:
                             infovideo['plot'] = data.decode('utf-8-sig')

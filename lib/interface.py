@@ -89,11 +89,17 @@ def weekend(params):
     create_listing([ weekend_item(item) for item in info_provider.weekend_schedule(plugin.get_url) ])
 
 
+def calendar_listing(year):
+    items = [ item for item in info_provider.calendar(year, plugin.get_url) ]
+    if not items:
+        xbmcgui.Dialog().notification(_addon_title_, u'Не удалось получить календарь, попробуйте позже')
+    create_listing (items)
+
 @plugin.action()
 def curr_season(params):
     xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-    create_listing ([ item for item in info_provider.calendar(current_year(), plugin.get_url) ])
+    calendar_listing(current_year())
 
 def item_by_year(year):
     return {'label': str(year),
@@ -111,7 +117,7 @@ def prev_seasons(params):
 def show_season(params):
     xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-    create_listing ([ item for item in info_provider.calendar(params['year'], plugin.get_url) ])
+    calendar_listing(params['year'])
 
 def gp_event(event, params):
     url = plugin.get_url(action='search', event=event, season=params['season'], GP=params['GP'])
