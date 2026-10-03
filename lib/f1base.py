@@ -6,6 +6,25 @@ from datetime import datetime,tzinfo,timedelta
 def current_year():
     return datetime.now().year
 
+def strptime(text, format):
+    # type: (str, str) -> datetime
+    ''' datetime.strptime с обходом бага C-кэша в Kodi.
+
+        datetime_strptime (CPython Modules/_datetimemodule.c) кэширует модуль
+        _strptime в статической переменной на весь процесс. Kodi выполняет каждый
+        скрипт в отдельном контексте интерпретатора, поэтому после завершения
+        первого запуска, вызвавшего datetime.strptime, у закэшированного (старого)
+        экземпляра модуля атрибут _strptime_datetime оказывается None и все
+        последующие вызовы datetime.strptime в процессе падают с
+        TypeError: 'NoneType' object is not callable (без кадров Python внутри).
+        Свежий экземпляр _strptime в sys.modules текущего запуска при этом
+        исправен, поэтому при ошибке повторяем вызов через него напрямую. '''
+    try:
+        return datetime.strptime(text, format)
+    except TypeError:
+        import _strptime
+        return _strptime._strptime_datetime(datetime, text, format)
+
 def gp_variants(GP):
     # type: (str) -> str
     variants = {
@@ -47,7 +66,7 @@ def local_time_from_msk(msk_dt):
     LOCAL = Zone(TZ_OFFSET, False, 'LOCAL')
 
     format = '%H:%M'
-    dt = datetime.strptime(msk_dt, format)
+    dt = strptime(msk_dt, format)
     dt = dt.replace(tzinfo=MSK)
     dt = dt.astimezone(LOCAL)
     result = datetime.strftime(dt, format)

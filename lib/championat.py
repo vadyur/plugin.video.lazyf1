@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 
 try:
-    from .f1base import current_year
+    from .f1base import current_year, strptime as f1_strptime
 except ImportError:
-    from f1base import current_year
+    from f1base import current_year, strptime as f1_strptime
 
 from vdlib.util.log import debug
 from vdlib.scrappers.base import clean_html
@@ -173,7 +173,7 @@ class Championat(object):
                 if not td_date or not td_name:
                     continue
                 try:
-                    dt = datetime.strptime(td_date.get_text(strip=True), '%d.%m.%Y %H:%M').replace(tzinfo=MSK)
+                    dt = f1_strptime(td_date.get_text(strip=True), '%d.%m.%Y %H:%M').replace(tzinfo=MSK)
                 except ValueError:
                     continue
 
