@@ -213,7 +213,7 @@ def list_torrent(params):
     def get_art():
         page_url = params.get('page_url')
         if page_url:
-            poster = rutracker.poster('http://{}/forum/{}'.format( rutracker.baseurl, page_url))
+            poster = rutracker.poster('https://{}/forum/{}'.format( rutracker.baseurl, page_url))
             if poster:
                 return {
                     'poster': poster,
@@ -225,7 +225,7 @@ def list_torrent(params):
     if not page_url:
         return
 
-    magnet = rutracker.magnet_link('http://{}/forum/{}'.format(rutracker.baseurl, page_url))
+    magnet = rutracker.magnet_link('https://{}/forum/{}'.format(rutracker.baseurl, page_url))
     if not magnet:
         return
 
